@@ -15,6 +15,7 @@
 
 namespace nim_comp
 {
+    using namespace necall_kit;
     /**
      * @brief wrapper参数
      */

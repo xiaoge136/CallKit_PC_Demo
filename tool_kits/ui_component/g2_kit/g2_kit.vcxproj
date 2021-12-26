@@ -183,6 +183,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="component\avchat_component.h" />
+    <ClInclude Include="component\net_call_helper.h" />
     <ClInclude Include="component\wrapper\avchat_business_wrapper.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="gui\bitmap_control_g2.h" />
@@ -194,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="component\avchat_component.cpp" />
+    <ClCompile Include="component\net_call_helper.cpp" />
     <ClCompile Include="component\wrapper\avchat_business_wrapper.cpp" />
     <ClCompile Include="g2_kit.cpp" />
     <ClCompile Include="gui\bitmap_control_g2.cpp" />

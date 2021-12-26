@@ -14,9 +14,9 @@
 #include "nertc_sdk/nertc_engine_ex.h"
 #include "nertc_sdk/nertc_audio_device_manager.h"
 #include "nertc_sdk/nertc_video_device_manager.h"
-#include "ui_kit/util/net_call_helper.h"
+#include "net_call_helper.h"
 
-namespace nim_comp
+namespace necall_kit
 {
     /**
      * 呼叫类型，与nim::NIMSignalingType同值
@@ -550,7 +550,7 @@ namespace nim_comp
         void startDialWaitingTimer();
         void closeChannelInternal(const std::string& channelId, AvChatComponentOptCb cb);
         void updateChannelMembers(const nim::SignalingJoinResParam* res);
-        void handleNetCallMsg(nim_comp::NIMNetCallStatus why);
+        void handleNetCallMsg(necall_kit::NIMNetCallStatus why);
 
         GetTokenServiceFunc getTokenService_;
         std::string getAccid(int64_t uid);

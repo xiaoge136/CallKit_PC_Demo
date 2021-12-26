@@ -1,13 +1,11 @@
-﻿#include "pch.h"
-#include "avchat_component.h"
+﻿#include "avchat_component.h"
 #include "avchat_component_def.h"
 #include "base/win32/path_util.h"
 #include "base/time/time.h"
-#include "wrapper/avchat_business_wrapper.h"
 #include "nim_sdk/src/cpp_sdk/nim_tools/http/nim_tools_http_cpp.h"
 #include <future>
 
-namespace nim_comp
+namespace necall_kit
 {
     using Signaling = nim::Signaling;
     using namespace nim;
@@ -274,7 +272,7 @@ namespace nim_comp
             closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
             compEventHandler_.lock()->onCallingTimeOut();
         }
-        handleNetCallMsg(nim_comp::kNIMNetCallStatusTimeout);
+        handleNetCallMsg(necall_kit::kNIMNetCallStatusTimeout);
     }
     void AvChatComponent::startDialWaitingTimer()
     {
@@ -285,7 +283,7 @@ namespace nim_comp
                 //closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
                 timeOutHurryUp = true;
                 compEventHandler_.lock()->onCallingTimeOut();
-                handleNetCallMsg(nim_comp::kNIMNetCallStatusTimeout);
+                handleNetCallMsg(necall_kit::kNIMNetCallStatusTimeout);
             }
             });
         timer_cb = calling_timeout_timer_.ToWeakCallback(timer_cb);
@@ -338,7 +336,7 @@ namespace nim_comp
         Signaling::Reject(param, rejectCb);
 
         invitedInfo_ = SignalingNotifyInfoInvite();
-        handleNetCallMsg(nim_comp::kNIMNetCallStatusRejected);
+        handleNetCallMsg(necall_kit::kNIMNetCallStatusRejected);
     }
 
     void AvChatComponent::hangup(AvChatComponentOptCb cb)
@@ -372,7 +370,7 @@ namespace nim_comp
             timeOutHurryUp = false;
         }
         else {
-            handleNetCallMsg(nim_comp::kNIMNetCallStatusCanceled);
+            handleNetCallMsg(necall_kit::kNIMNetCallStatusCanceled);
         }
 
         //主动方调用挂断
@@ -504,7 +502,7 @@ namespace nim_comp
             values["cid"] = 2; //cid = 2表示控制信令，表示触发被叫方视频转音频
             values["type"] = kAvChatAudio; ///***音频频道* /AUDIO(1), 视频频道VIDEO(2) */
             nim::SignalingControlParam controlParam;
-            controlParam.channel_id_ = joined_channel_id_.empty()? AvChatBusinessWrapper::getChannelId(): joined_channel_id_;
+            controlParam.channel_id_ = joined_channel_id_.empty()? getCreatedChannelInfo().channel_info_.channel_id_ : joined_channel_id_;
             controlParam.account_id_ = user_id;
             controlParam.custom_info_ = values.toStyledString();
 
@@ -857,7 +855,7 @@ namespace nim_comp
             SendNetCallMsg(inviteInfo->from_account_id_,
                 param.channel_id_,
                 inviteInfo->channel_info_.channel_type_,
-                isFromGroup ? (int)nim_comp::kNIMNetCallStatusRejected : (int)nim_comp::kNIMNetCallStatusBusy,
+                isFromGroup ? (int)necall_kit::kNIMNetCallStatusRejected : (int)necall_kit::kNIMNetCallStatusBusy,
                 std::vector<std::string>{inviteInfo->from_account_id_, nim::Client::GetCurrentUserAccount()},
                 std::vector<int>{0, 0}
             );
@@ -947,11 +945,11 @@ namespace nim_comp
     }
     
     //处理异常情况下的话单
-    void AvChatComponent::handleNetCallMsg(nim_comp::NIMNetCallStatus why)
+    void AvChatComponent::handleNetCallMsg(necall_kit::NIMNetCallStatus why)
     {
         if (status_ == inCall) return; //对于已经建立连接通话之后的挂断，不需要发送话单，由服务器发送
         if (isMasterInvited) {
-            std::string channel_id = AvChatBusinessWrapper::getChannelId();
+            std::string channel_id = getCreatedChannelInfo().channel_info_.channel_id_;
             std::string session_id = toAccid;
             bool is_video_mode_ = callType == AVCHAT_CALL_TYPE::kAvChatVideo ? true : false;
             SendNetCallMsg(session_id,
