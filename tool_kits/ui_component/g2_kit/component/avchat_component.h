@@ -313,11 +313,10 @@ namespace nim_comp
          * @brief 呼叫
          * @param userId 对方用户id 
          * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
-         * @param attachment 附件信息，透传到onInvited
          * @param cb 结果回调
          * @return void
          */
-        void call(const std::string& userId, AVCHAT_CALL_TYPE type, const std::string& attachment, AvChatComponentOptCb cb);
+        void call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb);
 
         /**
          * @brief 接受

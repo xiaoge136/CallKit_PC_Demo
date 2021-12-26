@@ -275,11 +275,7 @@ namespace nim_comp
         std::string userId = params.userId;
         AVCHAT_CALL_TYPE callType = AVCHAT_CALL_TYPE(params.callType);
 
-        Json::Value values;
-        Json::FastWriter writer;
-        values["key"] = "call";
-        values["value"] = "testvalue";
-        component.call(userId, callType, writer.write(values), params.optCb);
+        component.call(userId, callType, params.optCb);
 
         nbase::BatpPack bp;
         bp.head_.action_name_ = kAvChatOnCalling;

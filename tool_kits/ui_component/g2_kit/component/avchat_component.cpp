@@ -236,13 +236,19 @@ namespace nim_comp
 
     // 呼叫方首先发送INVITE，扩展字段携带自身版本号(version)及动态channelName，即<channelId> | 0 | <uid>，并直接预加载token。
     // 0代表1v1，uid为信令房间返回的用户uid；1代表group呼叫，uid传群组teamId
-    void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, const std::string& attachment, AvChatComponentOptCb cb)
+    void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb)
     {
         sendStatics("call", appKey_);
         channelMembers_.clear();
         version_.clear();
         channelName_.clear();
-        attachment_ = attachment;
+
+        Json::Value values;
+        Json::FastWriter writer;
+        values["key"] = "call";
+        values["value"] = "testvalue";
+        attachment_ = writer.write(values);
+
         nim::SignalingCreateParam createParam;
         createParam.channel_type_ = (nim::NIMSignalingType)type;
         toAccid = userId;
