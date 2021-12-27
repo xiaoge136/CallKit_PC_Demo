@@ -1,4 +1,5 @@
-﻿#include "net_call_helper.h"
+﻿#include "pch.h"
+#include "net_call_helper.h"
 #include <vector>
 #include "src/cpp_sdk/nim/api/nim_cpp_talk.h"
 #include "src/cpp_sdk/nim/api/nim_cpp_msglog.h"
@@ -62,7 +63,7 @@ namespace necall_kit
                 type = json_values[kNIMNetCallType].asInt();
             ret = ui::MutiLanSupport::GetInstance()->GetStringViaID(StatusTipMsgs[status]);
 
-            if (NIMNetCallStatus(status) == kNIMNetCallStatusComplete)
+            if (necall_kit::NIMNetCallStatus(status) == necall_kit::kNIMNetCallStatusComplete)
             {
                 if (type == 2) {
                     auto strVideo = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_SET_VIDEO");

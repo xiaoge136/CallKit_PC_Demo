@@ -15,6 +15,7 @@
 #include "nertc_sdk/nertc_audio_device_manager.h"
 #include "nertc_sdk/nertc_video_device_manager.h"
 #include "net_call_helper.h"
+#include "third_party/timer/Timer.h"
 
 namespace necall_kit
 {
@@ -215,7 +216,7 @@ namespace necall_kit
     /**
      * @brief 组件实现类
      */
-    class AvChatComponent : public nbase::SupportWeakCallback, public nertc::IRtcEngineEventHandlerEx, public nertc::IRtcMediaStatsObserver
+    class AvChatComponent : public nertc::IRtcEngineEventHandlerEx, public nertc::IRtcMediaStatsObserver
     {
         /**
          * 呼叫的状态
@@ -565,7 +566,7 @@ namespace necall_kit
         nim::SignalingNotifyInfoInvite    invitedInfo_;
         nim::SignalingInviteParam        invitingInfo_;
         nim::SignalingCreateResParam    createdChannelInfo_;
-        nbase::WeakCallbackFlag            calling_timeout_timer_;
+		necall_kit::Timer          calling_timeout_timer_;
         ComponentStatus                    status_;
         std::string                        joined_channel_id_;
         int64_t                            to_account_id_;

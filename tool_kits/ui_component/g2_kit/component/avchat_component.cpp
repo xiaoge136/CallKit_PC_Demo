@@ -1,7 +1,9 @@
-﻿#include "avchat_component.h"
+﻿#include "pch.h"
+#include "avchat_component.h"
 #include "avchat_component_def.h"
 #include "base/win32/path_util.h"
 #include "base/time/time.h"
+#include "third_party/convert_utf/util.h"
 #include "nim_sdk/src/cpp_sdk/nim_tools/http/nim_tools_http_cpp.h"
 #include <future>
 
@@ -58,7 +60,7 @@ namespace necall_kit
         rtcEngine_ = (nertc::IRtcEngineEx*)createNERtcEngine();
         assert(rtcEngine_);
 
-        std::string logPath  = nbase::UTF16ToUTF8(nbase::win32::GetLocalAppDataDir().append(AVCHAT_LOG_DIR));
+        std::string logPath  = necall_kit::UTF16ToUTF8(necall_kit::GetLocalAppDataDir().append(AVCHAT_LOG_DIR));
 
         nertc::NERtcEngineContext context;
         context.app_key = appKey_.c_str();
@@ -73,9 +75,9 @@ namespace necall_kit
         if (0 != ret) {
             QLOG_APP(L"setAudioProfile failed!");
         }
-        Signaling::RegOnlineNotifyCb(nbase::Bind(&AvChatComponent::signalingNotifyCb, this, std::placeholders::_1));
-        Signaling::RegMutilClientSyncNotifyCb(nbase::Bind(&AvChatComponent::signalingMutilClientSyncCb, this, std::placeholders::_1));
-        Signaling::RegOfflineNotifyCb(nbase::Bind(&AvChatComponent::signalingOfflineNotifyCb, this, std::placeholders::_1));
+        Signaling::RegOnlineNotifyCb(std::bind(&AvChatComponent::signalingNotifyCb, this, std::placeholders::_1));
+        Signaling::RegMutilClientSyncNotifyCb(std::bind(&AvChatComponent::signalingMutilClientSyncCb, this, std::placeholders::_1));
+        Signaling::RegOfflineNotifyCb(std::bind(&AvChatComponent::signalingOfflineNotifyCb, this, std::placeholders::_1));
     }
 
     int AvChatComponent::setRecordDeviceVolume(int value)
@@ -143,9 +145,9 @@ namespace necall_kit
                 char device_id[kNERtcMaxDeviceIDLength]{ 0 };
                 int ret = audio_record_collection->getDevice(i, device_name, device_id);
                 if (recordDevicesNames)
-                    recordDevicesNames->emplace_back(nbase::UTF8ToUTF16(device_name));
+                    recordDevicesNames->emplace_back(necall_kit::UTF8ToUTF16(device_name));
                 if (recordDevicesIds)
-                    recordDevicesIds->emplace_back(nbase::UTF8ToUTF16(device_id));
+                    recordDevicesIds->emplace_back(necall_kit::UTF8ToUTF16(device_id));
             }
 
             nertc::IDeviceCollection* audio_playout_collection = audio_device_manager->enumeratePlayoutDevices();
@@ -155,9 +157,9 @@ namespace necall_kit
                 char device_id[kNERtcMaxDeviceIDLength]{ 0 };
                 int ret = audio_playout_collection->getDevice(i, device_name, device_id);
                 if (playoutDevicesNames)
-                    playoutDevicesNames->emplace_back(nbase::UTF8ToUTF16(device_name));
+                    playoutDevicesNames->emplace_back(necall_kit::UTF8ToUTF16(device_name));
                 if (playoutDevicesIds)
-                    playoutDevicesIds->emplace_back(nbase::UTF8ToUTF16(device_id));
+                    playoutDevicesIds->emplace_back(necall_kit::UTF8ToUTF16(device_id));
             }
         }
         if (video_device_manager)
@@ -169,9 +171,9 @@ namespace necall_kit
                 char device_id[kNERtcMaxDeviceIDLength]{ 0 };
                 int ret = video_collection->getDevice(i, device_name, device_id);
                 if (videoDeviceNames)
-                    videoDeviceNames->emplace_back(nbase::UTF8ToUTF16(device_name));
+                    videoDeviceNames->emplace_back(necall_kit::UTF8ToUTF16(device_name));
                 if (videoDeviceIds)
-                    videoDeviceIds->emplace_back(nbase::UTF8ToUTF16(device_id));
+                    videoDeviceIds->emplace_back(necall_kit::UTF8ToUTF16(device_id));
             }
         }
     }
@@ -181,7 +183,7 @@ namespace necall_kit
         rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
         if (!video_device_manager)
             return;
-        video_device_manager->setDevice(nbase::UTF16ToUTF8(id).c_str());
+        video_device_manager->setDevice(necall_kit::UTF16ToUTF8(id).c_str());
     }
 
     std::wstring AvChatComponent::getAudioDevice(bool isRecord)
@@ -195,7 +197,7 @@ namespace necall_kit
         isRecord ? audio_device_manager ->getRecordDevice(device_id)
             : audio_device_manager->getPlayoutDevice(device_id);
 
-        return nbase::UTF8ToUTF16(device_id);
+        return necall_kit::UTF8ToUTF16(device_id);
     }
     std::wstring AvChatComponent::getVideoDevice()
     {
@@ -207,7 +209,7 @@ namespace necall_kit
         char device_id[kNERtcMaxDeviceIDLength] = { 0 };
         video_device_manager->getDevice(device_id);
 
-        return nbase::UTF8ToUTF16(device_id);
+        return necall_kit::UTF8ToUTF16(device_id);
     }
 
     void AvChatComponent::setAudioDevice(const std::wstring& id, bool isRecord)
@@ -218,8 +220,8 @@ namespace necall_kit
         if (!audio_device_manager)
             return;
 
-        isRecord ? audio_device_manager->setRecordDevice(nbase::UTF16ToUTF8(id).c_str())
-            : audio_device_manager->setPlayoutDevice(nbase::UTF16ToUTF8(id).c_str());
+        isRecord ? audio_device_manager->setRecordDevice(necall_kit::UTF16ToUTF8(id).c_str())
+            : audio_device_manager->setPlayoutDevice(UTF16ToUTF8(id).c_str());
     }
 
     //登录登出使用IM SDK
@@ -258,7 +260,7 @@ namespace necall_kit
         isMasterInvited = true; //主叫方标记true
 
         //1,创建channel
-        auto createCb = nbase::Bind(&AvChatComponent::signalingCreateCb, this, _1, _2, cb);
+        auto createCb = std::bind(&AvChatComponent::signalingCreateCb, this, _1, _2, cb);
         Signaling::SignalingCreate(createParam, createCb);
         status_ = calling;
         startDialWaitingTimer();
@@ -276,24 +278,22 @@ namespace necall_kit
     }
     void AvChatComponent::startDialWaitingTimer()
     {
-        calling_timeout_timer_.Cancel();
-        StdClosure timer_cb = nbase::Bind([this]() {
-            if (status_ == calling)
-            {
-                //closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
-                timeOutHurryUp = true;
-                compEventHandler_.lock()->onCallingTimeOut();
-                handleNetCallMsg(necall_kit::kNIMNetCallStatusTimeout);
-            }
-            });
-        timer_cb = calling_timeout_timer_.ToWeakCallback(timer_cb);
-        nbase::ThreadManager::PostDelayedTask(timer_cb, nbase::TimeDelta::FromSeconds(iCallingTimeoutSeconds));
+		calling_timeout_timer_.stop();
+		calling_timeout_timer_.startOnce(iCallingTimeoutSeconds, [this]() {
+			if (status_ == calling)
+			{
+				//closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
+				timeOutHurryUp = true;
+				compEventHandler_.lock()->onCallingTimeOut();
+				handleNetCallMsg(necall_kit::kNIMNetCallStatusTimeout);
+			}
+		});
     }
 
     // 被叫方发送ACCEPT，并携带自己版本号(version)
     void AvChatComponent::accept(AvChatComponentOptCb cb)
     {
-        calling_timeout_timer_.Cancel();
+        calling_timeout_timer_.stop();
         sendStatics("accept", appKey_);
         //信令accept（自动join）
         SignalingAcceptParam param;
@@ -314,7 +314,7 @@ namespace necall_kit
         param.accept_custom_info_ = fw.write(values);
 
         //int ret = rtcEngine_->joinChannel("", param.channel_id_.c_str(), 0);
-        auto acceptCb = nbase::Bind(&AvChatComponent::signalingAcceptCb, this, _1, _2, cb);
+        auto acceptCb = std::bind(&AvChatComponent::signalingAcceptCb, this, _1, _2, cb);
 
         QLOG_APP(L"accept, version: {0}") << RTC_COMPONENT_VER;
         Signaling::Accept(param, acceptCb);
@@ -322,7 +322,7 @@ namespace necall_kit
 
     void AvChatComponent::reject(AvChatComponentOptCb cb)
     {
-        calling_timeout_timer_.Cancel();
+        calling_timeout_timer_.stop();
         if (!isMasterInvited)
             sendStatics("reject", appKey_);
         //信令reject
@@ -332,7 +332,7 @@ namespace necall_kit
         param.request_id_ = invitedInfo_.request_id_;
         param.offline_enabled_ = true;
 
-        auto rejectCb = nbase::Bind(&AvChatComponent::signalingRejectCb, this, _1, _2, cb);
+        auto rejectCb = std::bind(&AvChatComponent::signalingRejectCb, this, _1, _2, cb);
         Signaling::Reject(param, rejectCb);
 
         invitedInfo_ = SignalingNotifyInfoInvite();
@@ -417,7 +417,7 @@ namespace necall_kit
             nim::SignalingLeaveParam param;
             param.channel_id_ = joined_channel_id_;
             param.offline_enabled_ = true;
-            Signaling::Leave(param, nbase::Bind(&AvChatComponent::signalingLeaveCb, this, _1, _2, cb));
+            Signaling::Leave(param, std::bind(&AvChatComponent::signalingLeaveCb, this, _1, _2, cb));
         }
         else
         {
@@ -506,7 +506,7 @@ namespace necall_kit
             controlParam.account_id_ = user_id;
             controlParam.custom_info_ = values.toStyledString();
 
-            auto controlCb = nbase::Bind(&AvChatComponent::signalingControlCb,
+            auto controlCb = std::bind(&AvChatComponent::signalingControlCb,
                 this,
                 std::placeholders::_1,
                 std::placeholders::_2);
@@ -571,7 +571,7 @@ namespace necall_kit
         SignalingCloseParam param;
         param.channel_id_ = channelId;
         param.offline_enabled_ = true;
-        auto closeCb = nbase::Bind(&AvChatComponent::signalingCloseCb, this, _1, _2, cb);
+        auto closeCb = std::bind(&AvChatComponent::signalingCloseCb, this, _1, _2, cb);
         Signaling::SignalingClose(param, closeCb);
         isMasterInvited = false;
     }
@@ -720,7 +720,7 @@ namespace necall_kit
         inviteParam.request_id_ = channelId;
         inviteParam.custom_info_ = fw.write(values);
 
-        auto inviteCb = nbase::Bind(&AvChatComponent::signalingInviteCb, this, _1, _2, cb);
+        auto inviteCb = std::bind(&AvChatComponent::signalingInviteCb, this, _1, _2, cb);
         QLOG_APP(L"Signaling::Invite, callType: {0}, version: {1}, channelName: {2}") << (int)kAvChatP2P << RTC_COMPONENT_VER << channelName_;
         //3,信令 invite
         Signaling::Invite(inviteParam, inviteCb);
@@ -746,7 +746,7 @@ namespace necall_kit
         joinParam.uid_ = 0;//0，服务器会自动分配
         joinParam.offline_enabled_ = true;
 
-        auto joinCb = nbase::Bind(&AvChatComponent::signalingJoinCb,
+        auto joinCb = std::bind(&AvChatComponent::signalingJoinCb,
                             this,
                             std::placeholders::_1, 
                             std::placeholders::_2,
@@ -863,15 +863,13 @@ namespace necall_kit
         }
 
         // 接听计时
-        calling_timeout_timer_.Cancel();
-        StdClosure timer_cb = nbase::Bind([this]() {
-                timeOutHurryUp = true;
-                sendStatics("timeout", appKey_);
-                compEventHandler_.lock()->onUserCancel(from_account_id_);
-                status_ = idle;
-            });
-        timer_cb = calling_timeout_timer_.ToWeakCallback(timer_cb);
-        nbase::ThreadManager::PostDelayedTask(timer_cb, nbase::TimeDelta::FromSeconds(iCallingTimeoutSeconds));
+		calling_timeout_timer_.stop();
+		calling_timeout_timer_.startOnce(iCallingTimeoutSeconds, [this]() {
+			timeOutHurryUp = true;
+			sendStatics("timeout", appKey_);
+			compEventHandler_.lock()->onUserCancel(from_account_id_);
+			status_ = idle;
+		});
 
         //将收到邀请后的频道信息拷贝到内部，供accept使用
         invitedInfo_ = *inviteInfo;
@@ -1012,7 +1010,7 @@ namespace necall_kit
                 controlParam.account_id_ = joinInfo->member_.account_id_;
                 controlParam.custom_info_ = values.toStyledString();
 
-                auto controlCb = nbase::Bind(&AvChatComponent::signalingControlCb,
+                auto controlCb = std::bind(&AvChatComponent::signalingControlCb,
                     this,
                     std::placeholders::_1,
                     std::placeholders::_2);
@@ -1044,7 +1042,7 @@ namespace necall_kit
             timeOutHurryUp = false;
             return;
         }
-        calling_timeout_timer_.Cancel();
+        calling_timeout_timer_.stop();
         SignalingNotifyInfoCancelInvite* cancelInfo = (SignalingNotifyInfoCancelInvite*)notifyInfo.get();
         compEventHandler_.lock()->onUserCancel(cancelInfo->from_account_id_);
         status_ = idle;
@@ -1260,8 +1258,8 @@ namespace necall_kit
 
     void sendStatics(const std::string& id, const std::string& appkey)
     {
-        nbase::Time nowTime = nbase::Time::Now();
-        time_t curTime = nowTime.ToTimeT() * 1000 + nowTime.ToTimeStruct(true).millisecond();
+		time_t curTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
         std::async(std::launch::async, [id, appkey, curTime](){
             Json::Value values;
             Json::FastWriter writer;
