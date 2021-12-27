@@ -1,8 +1,11 @@
 ﻿#include "net_call_helper.h"
 #include "avchat_component_def.h"
 
-#include "src/cpp_sdk/nim/api/nim_cpp_talk.h"
-#include "src/cpp_sdk/nim/api/nim_cpp_msglog.h"
+#include <atomic>
+
+#include "nim_sdk/include/depend_lib/include/json/json.h"
+#include "nim_sdk/include/nim_cpp_tools_api.h"
+#include "nim_sdk/include/nim_cpp_api.h"
 
 const static char* kNIMNetCallType = "type";
 const static char* kNIMNetCallStatus = "status";
@@ -42,70 +45,6 @@ namespace necall_kit
 
     static std::atomic_bool hasRegMendMsgCb = false;
 
-    std::wstring _ParseNetCallContent(const std::string& msg_attach)
-    {
-        Json::Value json_values;
-        Json::Reader reader;
-        reader.parse(msg_attach, json_values);
-        if (!json_values.isObject())
-        {
-            YXLOG(Error) << "ParseNetCallMsg error: wrong msg attach_: " << msg_attach << YXLOGEnd;
-            return L"";
-        }
-
-        std::wstring ret;
-        if (json_values[kNIMNetCallStatus].isInt())
-        {
-            int status = json_values[kNIMNetCallStatus].asInt();
-            int type = 2; //通话类型，1::音频，2:视频
-            assert(status < StatusTipMsgs.size() && "net call msg info error");
-            if (json_values[kNIMNetCallType].isInt())
-                type = json_values[kNIMNetCallType].asInt();
-            ret = ui::MutiLanSupport::GetInstance()->GetStringViaID(StatusTipMsgs[status]);
-
-            if (necall_kit::NIMNetCallStatus(status) == necall_kit::kNIMNetCallStatusComplete)
-            {
-                if (type == 2) {
-                    auto strVideo = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_SET_VIDEO");
-                    ret = strVideo + ret;
-                }
-                else {
-                    auto strVideo = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_SET_AUDIO");
-                    ret = strVideo + ret;
-                }
-                assert(json_values[kNIMNetCallDurations].isArray()
-                    && json_values[kNIMNetCallDurations].size() > 0);
-
-                auto duration_format = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_NETCALL_MSG_DURATION");
-                std::wstring duration = nbase::StringPrintf(duration_format.c_str(),
-                    json_values[kNIMNetCallDurations][0][kNIMNetCallDuration].asInt()
-                );
-                ret += duration;
-            }
-        }
-        return ret;
-    }
-    std::wstring ParseNetCallMsg(const nim::SessionData& msg)
-    {
-        if (msg.msg_type_ != nim::kNIMMessageTypeG2NetCall)
-        {
-            YXLOG(Error) << "ParseNetCallMsg error: wrong msg type: " << msg.msg_type_ << YXLOGEnd;
-            return L"";
-        }
-
-        return _ParseNetCallContent(msg.msg_attach_);
-    }
-
-    std::wstring ParseNetCallMsg(const nim::IMMessage& msg)
-    {
-        if (msg.type_ != nim::kNIMMessageTypeG2NetCall) 
-        {
-            YXLOG(Error) << "ParseNetCallMsg error: wrong msg type: " << msg.type_ << YXLOGEnd;
-            return L"";
-        }
-        
-        return _ParseNetCallContent(msg.attach_);
-    }
 
     void OnSendNetCallMsgCb(const nim::SendMessageArc& arc)
     {
@@ -137,8 +76,8 @@ namespace necall_kit
             nim::Talk::RegSendMsgCb(OnSendNetCallMsgCb);
         }*/
 
-        Json::Value values;
-        Json::FastWriter writer;
+        nim_cpp_wrapper_util::Json::Value values;
+        nim_cpp_wrapper_util::Json::FastWriter writer;
         values[kNIMNetCallType] = type;
         values[kNIMNetCallStatus] = status;
         values[kNIMNetCallChannelId] = channelId;
@@ -146,14 +85,14 @@ namespace necall_kit
 
         for (int i = 0; i < members.size(); i++)
         {
-            Json::Value info;
+            nim_cpp_wrapper_util::Json::Value info;
             info[kNIMNetCallAccid] = members[i];
             info[kNIMNetCallDuration] = durations[i];
             values[kNIMNetCallDurations].append(info);
         }
 
         auto attach_info = writer.write(values);
-        std::string client_msg_id = QString::GetGUID();
+        std::string client_msg_id = nim::Tool::GetUuid();
         nim::MessageSetting setting;
 
         auto json_msg = nim::Talk::CreateG2NetCallMessage(to, nim::kNIMSessionTypeP2P, client_msg_id, attach_info, setting);

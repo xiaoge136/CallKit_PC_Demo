@@ -4,9 +4,11 @@
 #include "third_party/timer/Timer.h"
 #include <future>
 #include <iostream>
+#include <set>
 
-#include "nim_sdk/src/cpp_sdk/nim_tools/http/nim_tools_http_cpp.h"
-
+#include "nim_sdk/include/depend_lib/include/json/json.h"
+#include "nim_sdk/include/nim_cpp_tools_api.h"
+#include "nim_sdk/include/nim_cpp_api.h"
 
 //#ifdef _WIN64
 //#ifdef _DEBUG
@@ -274,8 +276,8 @@ namespace necall_kit
         version_.clear();
         channelName_.clear();
 
-        Json::Value values;
-        Json::FastWriter writer;
+        nim_cpp_wrapper_util::Json::Value values;
+        nim_cpp_wrapper_util::Json::FastWriter writer;
         values["key"] = "call";
         values["value"] = "testvalue";
         attachment_ = writer.write(values);
@@ -335,13 +337,13 @@ namespace necall_kit
         param.offline_enabled_ = true;
         param.uid_ = 0;
 
-        Json::Value values;
+        nim_cpp_wrapper_util::Json::Value values;
         //TODO PC暂不实现多人通话，故此处不处理channel中的其他人的信息
         //单人通话不传kAvChatChannelMembers
-        Json::Reader().parse("[]", values[kAvChatChannelMembers]);
+        nim_cpp_wrapper_util::Json::Reader().parse("[]", values[kAvChatChannelMembers]);
         //values[kAvChatCallType] = (int)kAvChatP2P;
         values[kAvChatCallVersion] = RTC_COMPONENT_VER;
-        Json::FastWriter fw;
+        nim_cpp_wrapper_util::Json::FastWriter fw;
         param.accept_custom_info_ = fw.write(values);
 
         //int ret = rtcEngine_->joinChannel("", param.channel_id_.c_str(), 0);
@@ -524,7 +526,7 @@ namespace necall_kit
             //ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
 
             YXLOG(Info) << "enableVideoToAudio ret: " << ret << YXLOGEnd;
-            Json::Value values;
+            nim_cpp_wrapper_util::Json::Value values;
             values["cid"] = 2; //cid = 2表示控制信令，表示触发被叫方视频转音频
             values["type"] = kAvChatAudio; ///***音频频道* /AUDIO(1), 视频频道VIDEO(2) */
             nim::SignalingControlParam controlParam;
@@ -726,16 +728,16 @@ namespace necall_kit
         int64_t uid;
         uid = channelMembers_[senderAccid];
         requestTokenValue(uid);
-        Json::Value values;
+        nim_cpp_wrapper_util::Json::Value values;
         //TODO PC暂不实现多人通话，故此处不处理channel中的其他人的信息
         //单人通话不传kAvChatChannelMembers
-        Json::Reader().parse("[]", values[kAvChatChannelMembers]);
+        nim_cpp_wrapper_util::Json::Reader().parse("[]", values[kAvChatChannelMembers]);
         values[kAvChatCallType] = (int)kAvChatP2P;
         values[kAvChatCallVersion] = RTC_COMPONENT_VER;
         channelName_ = std::string(channelId).append("|").append("0").append("|").append(std::to_string(uid));
         values[kAvChatCallChannelName] = channelName_;
         values[kAvCharCallAttachment] = attachment_;
-        Json::FastWriter fw;
+        nim_cpp_wrapper_util::Json::FastWriter fw;
         SignalingInviteParam inviteParam;
         inviteParam.account_id_ = toAccid;
         inviteParam.channel_id_ = channelId;
@@ -791,8 +793,8 @@ namespace necall_kit
 
     void AvChatComponent::handleControl(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
     {
-        Json::Value values;
-        Json::Reader reader;
+        nim_cpp_wrapper_util::Json::Value values;
+        nim_cpp_wrapper_util::Json::Reader reader;
         std::string info = notifyInfo->custom_info_;
         int type = notifyInfo->channel_info_.channel_type_;
         if (!reader.parse(info, values) || !values.isObject())
@@ -1027,7 +1029,7 @@ namespace necall_kit
             compEventHandler_.lock()->onUserEnter(joinInfo->member_.account_id_);
 
             if (isMasterInvited && versionCompare(version_, "1.1.0") < 0) {
-                Json::Value values;
+                nim_cpp_wrapper_util::Json::Value values;
                 values["cid"] = 1;  //cid = 1表示控制信令，调整call流程，修复话单主叫被叫方顺序不对bug
                 values["type"] = 0;
                 nim::SignalingControlParam controlParam;
@@ -1226,8 +1228,8 @@ namespace necall_kit
         version.clear();
         channelName.clear();
 
-        Json::Value values;
-        Json::Reader reader;
+        nim_cpp_wrapper_util::Json::Value values;
+        nim_cpp_wrapper_util::Json::Reader reader;
         if (!reader.parse(str, values) || !values.isObject())
         {
             YXLOG(Error) << "parse custom info failed: " << str << YXLOGEnd;
@@ -1284,8 +1286,8 @@ namespace necall_kit
     {
         time_t curTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         std::async(std::launch::async, [id, appkey, curTime](){
-            Json::Value values;
-            Json::FastWriter writer;
+            nim_cpp_wrapper_util::Json::Value values;
+            nim_cpp_wrapper_util::Json::FastWriter writer;
             values["id"] = id;
             values["accid"] = nim::Client::GetCurrentUserAccount();
             values["date"] = curTime;

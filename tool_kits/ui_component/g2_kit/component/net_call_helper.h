@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
+#include "src/cpp_sdk/nim/helper/nim_session_helper.h"
 
 /*
  *G2 话单解析模块
@@ -34,9 +35,6 @@ namespace necall_kit
         kNIMNetCallTypeAudio = 1,
         kNIMNetCallTypeVideo = 2,
     };
-
-    std::wstring ParseNetCallMsg(const nim::SessionData& msg);
-    std::wstring ParseNetCallMsg(const nim::IMMessage& msg);
 
     void SendNetCallMsg(const std::string& to, const std::string& channelId, int type, int status, std::vector<std::string> members, std::vector<int> durations);
 }

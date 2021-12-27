@@ -132,7 +132,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\libs\x64\;..\tool_kits\ui_component\g2_kit\component\third_party\alog\lib\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libssld.lib;libcryptod.lib;custom_app_sdk_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
@@ -158,8 +158,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;Crypt32.lib;yx_alog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;..\tool_kits\ui_component\g2_kit\component\third_party\alog\lib\x86\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll;NELivePlayer.dll</DelayLoadDLLs>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -187,12 +187,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbghelp.lib;vfw32.lib;tinyxml.lib;wxsqlite3.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;vfw32.lib;tinyxml.lib;wxsqlite3.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;jsoncpp.lib;yx_alog.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <EnableUAC>true</EnableUAC>
+      <AdditionalLibraryDirectories>..\tool_kits\ui_component\g2_kit\component\third_party\alog\lib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
