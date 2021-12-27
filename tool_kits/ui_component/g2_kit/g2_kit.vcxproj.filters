@@ -25,6 +25,12 @@
     <Filter Include="component\wrapper">
       <UniqueIdentifier>{43a6e55a-6a03-4681-8d32-0e8710d99c01}</UniqueIdentifier>
     </Filter>
+    <Filter Include="component\third_party">
+      <UniqueIdentifier>{66ec5088-3bfa-488c-b6ec-30a14af30988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="component\third_party\util">
+      <UniqueIdentifier>{399e5e85-57d0-4d8d-b295-db9c74173e89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -57,6 +63,9 @@
     <ClInclude Include="component\net_call_helper.h">
       <Filter>component</Filter>
     </ClInclude>
+    <ClInclude Include="component\third_party\util\util.h">
+      <Filter>component\third_party\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="g2_kit.cpp">
@@ -88,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="component\net_call_helper.cpp">
       <Filter>component</Filter>
+    </ClCompile>
+    <ClCompile Include="component\third_party\util\util.cpp">
+      <Filter>component\third_party\util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

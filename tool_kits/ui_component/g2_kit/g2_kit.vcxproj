@@ -100,7 +100,7 @@
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;$(ProjectDir)../../../nim_sdk/;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;$(ProjectDir)../../../nim_sdk/;..\..\..\app_sdk\include;.\component\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
@@ -184,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="component\avchat_component.h" />
     <ClInclude Include="component\net_call_helper.h" />
+    <ClInclude Include="component\third_party\util\util.h" />
     <ClInclude Include="component\wrapper\avchat_business_wrapper.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="gui\bitmap_control_g2.h" />
@@ -196,6 +197,7 @@
   <ItemGroup>
     <ClCompile Include="component\avchat_component.cpp" />
     <ClCompile Include="component\net_call_helper.cpp" />
+    <ClCompile Include="component\third_party\util\util.cpp" />
     <ClCompile Include="component\wrapper\avchat_business_wrapper.cpp" />
     <ClCompile Include="g2_kit.cpp" />
     <ClCompile Include="gui\bitmap_control_g2.cpp" />
