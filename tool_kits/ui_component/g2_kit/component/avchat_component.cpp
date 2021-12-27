@@ -1,9 +1,23 @@
 ﻿#include "avchat_component.h"
-#include "avchat_component_def.h"
 #include "base/win32/path_util.h"
 #include "base/time/time.h"
 #include "nim_sdk/src/cpp_sdk/nim_tools/http/nim_tools_http_cpp.h"
 #include <future>
+#include <iostream>
+
+//#ifdef _WIN64
+//#ifdef _DEBUG
+//#pragma comment(lib, __FILE__"\\..\\third_party\\alog\\lib\\x64\\Debug\\yx_alog.lib")
+//#else
+//#pragma comment(lib, __FILE__"\\..\\third_party\\alog\\lib\\x64\\Release\\yx_alog.lib")
+//#endif
+//#else
+//#ifdef _DEBUG
+//#pragma comment(lib, __FILE__"\\..\\third_party\\alog\\lib\\x86\\Debug\\yx_alog.lib")
+//#else
+//#pragma comment(lib, __FILE__"\\..\\third_party\\alog\\lib\\x86\\Release\\yx_alog.lib")
+//#endif // _DEBUG
+//#endif // _WIN64
 
 namespace necall_kit
 {
@@ -12,6 +26,7 @@ namespace necall_kit
     using namespace std::placeholders;
 
     const int iCallingTimeoutSeconds = 30;
+    std::string g_logPath;
 
     bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName, std::string& attachment);
     int64_t getUid(const std::list<SignalingMemberInfo>& list, const std::string& accid);
@@ -26,7 +41,20 @@ namespace necall_kit
         timeOutHurryUp = false;
         isMasterInvited = false;
         isUseRtcSafeMode = false;
+        
+        std::string filePath = getenv("LOCALAPPDATA");
+        if (!filePath.empty()) {
+            filePath.append("/NetEase/CallKit");
+        }
+        else {
+            std::cout << "log filePath empty!" << std::endl;
+        }
+        g_logPath = filePath;
+        ALog::CreateInstance(g_logPath, "call_kit", Info);
+        ALog::GetInstance()->setShortFileName(true);
+        YXLOG(Info) << "--------------------AvChatComponent start--------------------" << YXLOGEnd;
     }
+
     AvChatComponent::~AvChatComponent()
     {
         if (rtcEngine_)
@@ -35,13 +63,15 @@ namespace necall_kit
             destroyNERtcEngine((void*&)rtcEngine_);
             rtcEngine_ = nullptr;
         }
+        YXLOG(Info) << "--------------------AvChatComponent end--------------------" << YXLOGEnd;
+        ALog::DestoryInstance();
     }
 
     void AvChatComponent::release()
     {
         if (rtcEngine_)
         {
-            QLOG_APP(L"AvChatComponent release");
+            YXLOG(Info) << "AvChatComponent release" << YXLOGEnd;
             rtcEngine_->release();
             destroyNERtcEngine((void*&)rtcEngine_);
             rtcEngine_ = nullptr;
@@ -71,7 +101,7 @@ namespace necall_kit
         assert(ret == 0);
         ret = rtcEngine_->setAudioProfile(nertc::kNERtcAudioProfileStandardExtend, nertc::kNERtcAudioScenarioSpeech);
         if (0 != ret) {
-            QLOG_APP(L"setAudioProfile failed!");
+            YXLOG(Info) << "setAudioProfile failed, ret: " << ret << YXLOGEnd;
         }
         Signaling::RegOnlineNotifyCb(nbase::Bind(&AvChatComponent::signalingNotifyCb, this, std::placeholders::_1));
         Signaling::RegMutilClientSyncNotifyCb(nbase::Bind(&AvChatComponent::signalingMutilClientSyncCb, this, std::placeholders::_1));
@@ -102,7 +132,7 @@ namespace necall_kit
             int ret = audio_device_manager->adjustPlaybackSignalVolume(value);
             if (ret == 0)
             {
-                QLOG_APP(L"setPlayoutDeviceVolume seccess");
+                YXLOG(Info) << "setPlayoutDeviceVolume seccess" << YXLOGEnd;
                 compEventHandler_.lock()->onAudioVolumeChanged(value, false);
             }
             return ret;
@@ -315,8 +345,7 @@ namespace necall_kit
 
         //int ret = rtcEngine_->joinChannel("", param.channel_id_.c_str(), 0);
         auto acceptCb = nbase::Bind(&AvChatComponent::signalingAcceptCb, this, _1, _2, cb);
-
-        QLOG_APP(L"accept, version: {0}") << RTC_COMPONENT_VER;
+        YXLOG(Info) << "accept, version: " << RTC_COMPONENT_VER << YXLOGEnd;
         Signaling::Accept(param, acceptCb);
     }
 
@@ -344,7 +373,7 @@ namespace necall_kit
         rtcEngine_->leaveChannel();
         if (status_ == idle) 
         {
-            QLOG_APP(L"The AvChatComponent status is idle, discard hangup operation");
+            YXLOG(Info) << "The AvChatComponent status is idle, discard hangup operation" << YXLOGEnd;
             return;
         }
         if (status_ == calling && isMasterInvited)
@@ -404,7 +433,7 @@ namespace necall_kit
         }
         else
         {
-            QLOG_ERR(L"cancel error");
+            YXLOG(Error) << "cancel error" << YXLOGEnd;
             if (cb)
                 cb(0);
         }
@@ -421,7 +450,7 @@ namespace necall_kit
         }
         else
         {
-            QLOG_ERR(L"leave error: no joined channel exist.");
+            YXLOG(Error) << "leave error: no joined channel exist." << YXLOGEnd;
             if (cb)
                 cb(0);
         }
@@ -430,40 +459,38 @@ namespace necall_kit
     {
         assert(rtcEngine_ && canvas);
         int ret = rtcEngine_->setupLocalVideoCanvas(canvas);
-        QLOG_APP(L"setupLocalView ret: {0}") << ret;
+        YXLOG(Info) << "setupLocalView ret: " << ret << YXLOGEnd;
     }
     void AvChatComponent::setupRemoteView(nertc::NERtcVideoCanvas* canvas, const std::string& userId)
     {
         assert(rtcEngine_);
         int64_t uid = channelMembers_[userId];
         int ret = rtcEngine_->setupRemoteVideoCanvas(uid, canvas);
-        QLOG_APP(L"setupLocalView ret: {0}") << ret;
+        YXLOG(Info) << "setupLocalView ret: " << ret << YXLOGEnd;
         //ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
-
-        QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
+        //YXLOG(Info) << "subscribeRemoteVideoStream ret: " << ret << YXLOGEnd;
     }
 
     void AvChatComponent::switchCamera()
     {
         //PC暂不实现摄像头切换
-        assert(false, "swtich camera is not supported on PC");
+        assert(false && "swtich camera is not supported on PC");
     }
     void AvChatComponent::enableLocalVideo(bool enable)
     {
         assert(rtcEngine_);
         int ret = rtcEngine_->enableLocalVideo(enable);
-        QLOG_APP(L"enableLocalVideo ret: {0}") << ret;
+        YXLOG(Info) << "enableLocalVideo ret: " << ret << YXLOGEnd;
     }
     //音频输入设备静音
     void AvChatComponent::muteLocalAudio(bool mute)
     {
         assert(rtcEngine_); 
-        if (mute)
-        {
-            QLOG_APP(L"muteLocalAudio ");
-        }
+        YXLOG(Info) << "muteLocalAudio, mute: " << mute << YXLOGEnd;
         int ret = rtcEngine_->enableLocalAudio(!mute);
-        QLOG_APP(L"enableLocalAudio ret: {0}") << ret;
+        if (0 != ret) {
+            YXLOG(Info) << "enableLocalAudio, ret: " << ret << YXLOGEnd;
+        }
     }
     void AvChatComponent::enableAudioPlayout(bool enable)
     {
@@ -491,13 +518,11 @@ namespace necall_kit
             int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, false);
             //ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
 
-            QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
-
+            YXLOG(Info) << "subscribeRemoteVideoStream ret: " << ret << YXLOGEnd;
             ret = rtcEngine_->muteLocalVideoStream(true);
             //ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
 
-            QLOG_APP(L"enableVideoToAudio ret: {0}") << ret;
-
+            YXLOG(Info) << "enableVideoToAudio ret: " << ret << YXLOGEnd;
             Json::Value values;
             values["cid"] = 2; //cid = 2表示控制信令，表示触发被叫方视频转音频
             values["type"] = kAvChatAudio; ///***音频频道* /AUDIO(1), 视频频道VIDEO(2) */
@@ -567,7 +592,7 @@ namespace necall_kit
 
     void AvChatComponent::closeChannelInternal(const std::string& channelId, AvChatComponentOptCb cb)
     {
-        QLOG_APP(L"closeChannelInternal， channelId: {0}")<< channelId;
+        YXLOG(Info) << "closeChannelInternal, channelId: " << channelId << YXLOGEnd;
         SignalingCloseParam param;
         param.channel_id_ = channelId;
         param.offline_enabled_ = true;
@@ -579,7 +604,7 @@ namespace necall_kit
     void AvChatComponent::signalingInviteCb(int errCode, std::shared_ptr<SignalingResParam> res_param, AvChatComponentOptCb cb)
     {
         //4,invite完毕后，call过程结束，调用cb返回结果
-        QLOG_APP(L"signalingInviteCb error: errCode:{0}") << errCode;
+        YXLOG(Info) << "signalingInviteCb, errCode: " << errCode << YXLOGEnd;
         if (errCode != 200)
         {
             //closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, cb);
@@ -592,8 +617,7 @@ namespace necall_kit
     void AvChatComponent::signalingAcceptCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
     {
         SignalingAcceptResParam* res = (SignalingAcceptResParam*)res_param.get();
-        QLOG_APP(L"signalingAcceptCb, errCOde: {0}") << errCode;
-
+        YXLOG(Info) << "signalingAcceptCb, errCode: " << errCode << YXLOGEnd;
         if (errCode == 200)
         {
             updateChannelMembers(res);
@@ -622,11 +646,11 @@ namespace necall_kit
                 }
                 std::string strToken = "";
                 if (isUseRtcSafeMode) strToken = stoken_;
-                QLOG_APP(L"handleControl: strToken = {0}") << strToken;
+                YXLOG(Info) << "handleControl strToken: " << strToken << YXLOGEnd;
                 int ret = rtcEngine_->joinChannel(strToken.c_str(), channelName_.c_str(), uid);
                 if (ret != 0)
                 {
-                    QLOG_ERR(L"nertc join channel failed: {0}") << ret;
+                    YXLOG(Error) << "nertc join channel failed, ret: " << ret << YXLOGEnd;
                     if (cb)
                         cb(errCode);
                     return;
@@ -640,7 +664,7 @@ namespace necall_kit
 
     void AvChatComponent::signalingRejectCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
     {
-        QLOG_APP(L"signalingAcceptCb, errCOde: {0}") << errCode;
+        YXLOG(Info) << "signalingAcceptCb, errCode: " << errCode << YXLOGEnd;
         if (cb) 
             cb(errCode);
 
@@ -648,23 +672,20 @@ namespace necall_kit
     }
     void AvChatComponent::signalingCloseCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
     {
-        QLOG_APP(L"signalingCloseCb: errCode: {0}") << errCode;
+        YXLOG(Info) << "signalingCloseCb, errCode: " << errCode << YXLOGEnd;
         if (errCode == 200)
         {
             createdChannelInfo_ = SignalingCreateResParam();
             joined_channel_id_.clear();
         }
-        else
-        {
-            QLOG_ERR(L"signalingCloseCb: errCode: {0}") << errCode;
-        }
+
         status_ = idle;
         if (cb)
             cb(errCode);
     }
     void AvChatComponent::signalingLeaveCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
     {
-        QLOG_APP(L"signalingLeaveCb errCode: {0}") << errCode;
+        YXLOG(Info) << "signalingLeaveCb, errCode: " << errCode << YXLOGEnd;
         if (errCode == 200)
         {
             joined_channel_id_.clear();
@@ -687,14 +708,14 @@ namespace necall_kit
             if (it.second == uid)
                 return it.first;
         }
-        QLOG_ERR(L"Get accid failed, uid: {0}") << uid;
+        YXLOG(Info) << "Get accid failed, uid: " << uid << YXLOGEnd;
         return "";
     }
     void AvChatComponent::signalingJoinCb(int errCode, std::shared_ptr<SignalingResParam> res_param, AvChatComponentOptCb cb, const std::string& channelId)
     {
         if (errCode != 200)
         {
-            QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
+            YXLOG(Error) << "SignalingOptCallback error, errCode: " << errCode << YXLOGEnd;
             closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
             if (cb) cb(errCode);
             return;
@@ -721,7 +742,7 @@ namespace necall_kit
         inviteParam.custom_info_ = fw.write(values);
 
         auto inviteCb = nbase::Bind(&AvChatComponent::signalingInviteCb, this, _1, _2, cb);
-        QLOG_APP(L"Signaling::Invite, callType: {0}, version: {1}, channelName: {2}") << (int)kAvChatP2P << RTC_COMPONENT_VER << channelName_;
+        YXLOG(Info) << "Signaling::Invite, callType: " << (int)kAvChatP2P << ", version: " << RTC_COMPONENT_VER << ", channelName: " << channelName_ << YXLOGEnd;
         //3,信令 invite
         Signaling::Invite(inviteParam, inviteCb);
         status_ = calling;
@@ -732,8 +753,9 @@ namespace necall_kit
     {
         if (errCode != 200)
         {
-            QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
-            if (cb) cb(errCode);
+            YXLOG(Error) << "SignalingOptCallback, errCode: " << errCode << YXLOGEnd;
+            if (cb)
+                cb(errCode);
             return;
         }
         assert(res_param);
@@ -760,7 +782,7 @@ namespace necall_kit
     {
         if (errCode != 200)
         {
-            QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
+            YXLOG(Error) << "SignalingOptCallback, errCode: " << errCode << YXLOGEnd;
             if (optCb_) optCb_(errCode);
             return;
         }
@@ -774,7 +796,7 @@ namespace necall_kit
         int type = notifyInfo->channel_info_.channel_type_;
         if (!reader.parse(info, values) || !values.isObject())
         {
-            QLOG_ERR(L"parse custom info failed: {0}");
+            YXLOG(Error) << "parse custom info failed" << YXLOGEnd;
             return;
         }
 
@@ -794,12 +816,13 @@ namespace necall_kit
                         enableLocalVideo(true);
                     }
                     std::string strToken = "";
-                    if (isUseRtcSafeMode) strToken = stoken_;
-                    QLOG_APP(L"handleControl: strToken: {0}") << strToken;
+                    if (isUseRtcSafeMode)
+                        strToken = stoken_;
+                    YXLOG(Info) << "handleControl: strToken: " << strToken << YXLOGEnd;
                     int ret = rtcEngine_->joinChannel(strToken.c_str(), notifyInfo->channel_info_.channel_id_.c_str(), to_account_id_);
                     if (ret != 0)
                     {
-                        QLOG_ERR(L"nertc join channel failed: {0}") << ret;
+                        YXLOG(Error) << "nertc join channel failed, ret: " << ret << YXLOGEnd;
                         //if (cb) cb(ret);
                         return;
                     }
@@ -829,7 +852,7 @@ namespace necall_kit
             assert(false);
             return;
         }
-        QLOG_APP(L"handleInvited, from_account_id: {0}, version: {1}, channelName: {2}, attachment: {3}") << notifyInfo->from_account_id_ << version_ << channelName_ << attachment_;
+        YXLOG(Info) << "handleInvited, from_account_id: " << notifyInfo->from_account_id_ << ", version: "<< version_ << ", channelName: " << channelName_ << ", attachment: " << attachment_ << YXLOGEnd;
         SignalingNotifyInfoInvite* inviteInfo = (SignalingNotifyInfoInvite*)notifyInfo.get();
 
         //忙线处理
@@ -845,10 +868,10 @@ namespace necall_kit
 
             Signaling::Reject(param, [isFromGroup](int errCode, std::shared_ptr<nim::SignalingResParam> res_param) {
                 if (!isFromGroup) {
-                    QLOG_APP(L"handle busy, Signaling::Reject return: {0}") << errCode;
+                    YXLOG(Info) << "handle busy, Signaling::Reject return: " << errCode << YXLOGEnd;
                 }
                 else {
-                    QLOG_APP(L"handle isFromGroup is true, Signaling::Reject return: {0}") << errCode;
+                    YXLOG(Info) << "handle isFromGroup is true, Signaling::Reject return: " << errCode << YXLOGEnd;
                 }
                 });
             //忙线方(被叫方)发送话单
@@ -893,7 +916,7 @@ namespace necall_kit
     {
         SignalingNotifyInfoAccept* acceptedInfo = (SignalingNotifyInfoAccept*)notifyInfo.get();
         //SignalingNotifyInfoAccept tempacceptedInfo = *acceptedInfo;
-        QLOG_APP(L"handleAccepted, from_account_id_: {0}, senderAccid: {1}") << acceptedInfo->from_account_id_ << senderAccid;
+        YXLOG(Info) << "handleAccepted, from_account_id_: " << acceptedInfo->from_account_id_ << ", senderAccid: " << senderAccid << YXLOGEnd;
         if (acceptedInfo->to_account_id_ != senderAccid)
             return;
     
@@ -910,8 +933,8 @@ namespace necall_kit
                 return;
             }
         }
-        QLOG_APP(L"handleAccepted, version_: {0}") << version_;
 
+        YXLOG(Info) << "handleAccepted, version_: " << version_ << YXLOGEnd;
         requestTokenValue(channelMembers_[senderAccid]);
         while ("xyz" == stoken_)
         {
@@ -926,8 +949,9 @@ namespace necall_kit
         }
         //auto selfUid = nim::Client::GetCurrentUserAccount();
         std::string strToken = "";
-        if (isUseRtcSafeMode) strToken = stoken_;
-        QLOG_APP(L"handleAccepted: strToken: {0}") << strToken;
+        if (isUseRtcSafeMode)
+            strToken = stoken_;
+        YXLOG(Info) << "handleAccepted: strToken: " << strToken << YXLOGEnd;
         int ret = rtcEngine_->joinChannel(strToken.c_str(), versionCompare(version_, "1.1.0") >= 0 ? channelName_.c_str() : acceptedInfo->channel_info_.channel_id_.c_str(), channelMembers_[senderAccid]);
 
         //rtcEngine_->enableLocalAudio(true);
@@ -938,7 +962,7 @@ namespace necall_kit
 
         if (ret != 0)
         {
-            QLOG_ERR(L"nertc join channel failed: {0}") << ret;
+            YXLOG(Error) << "nertc join channel failed: " << ret << YXLOGEnd;
             //if (cb) cb(ret);
             return;
         }
@@ -973,7 +997,7 @@ namespace necall_kit
     void AvChatComponent::handleRejected(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
     {
         SignalingNotifyInfoReject* rejectedInfo = (SignalingNotifyInfoReject*)notifyInfo.get();
-        QLOG_APP(L"handleRejected, from_account_id_: {0}") << rejectedInfo->from_account_id_;
+        YXLOG(Info) << "handleRejected, from_account_id_: " << rejectedInfo->from_account_id_ << YXLOGEnd;
         if (rejectedInfo->to_account_id_ != senderAccid)
             return;
 
@@ -993,14 +1017,14 @@ namespace necall_kit
     void AvChatComponent::handleJoin(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
     {
         SignalingNotifyInfoJoin* joinInfo = (SignalingNotifyInfoJoin*)notifyInfo.get();
-        QLOG_APP(L"handleJoin: accid: {0}, uid: {1}") << joinInfo->member_.account_id_ << joinInfo->member_.uid_;
+        YXLOG(Info) << "handleJoin: accid: " << joinInfo->member_.account_id_ << ", uid: "<< joinInfo->member_.uid_  << YXLOGEnd;
         channelMembers_[joinInfo->member_.account_id_] = joinInfo->member_.uid_;
 
         //有自身以外的人加入频道
         if (joinInfo->member_.account_id_ != senderAccid)
         {
             //status_ = calling;
-            QLOG_APP(L"handleJoin, onUserEnter, userID: {0}") << joinInfo->member_.account_id_;
+            YXLOG(Info) << "handleJoin, onUserEnter, userId: " << joinInfo->member_.account_id_ << YXLOGEnd;
             compEventHandler_.lock()->onUserEnter(joinInfo->member_.account_id_);
 
             if (isMasterInvited && versionCompare(version_, "1.1.0") < 0) {
@@ -1024,16 +1048,16 @@ namespace necall_kit
 
     void AvChatComponent::handleLeave(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
     {
-        SignalingNotifyInfoLeave* leaveInfo = (SignalingNotifyInfoLeave*)notifyInfo.get(); 
-        QLOG_APP(L"handleLeave, from_account_id_: {0}, senderAccid: {1}") << leaveInfo->from_account_id_ << senderAccid;
+        SignalingNotifyInfoLeave* leaveInfo = (SignalingNotifyInfoLeave*)notifyInfo.get();
+        YXLOG(Info) << "handleLeave, from_account_id_: " << leaveInfo->from_account_id_ << ", senderAccid: "<< senderAccid << YXLOGEnd;
 
         compEventHandler_.lock()->onUserLeave(leaveInfo->from_account_id_);
     }
     void AvChatComponent::handleClose(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
     {
         SignalingNotifyInfoClose* closeInfo = (SignalingNotifyInfoClose*)notifyInfo.get();
-        QLOG_APP(L"handleClose, from_account_id_: {0}, senderAccid: {1}") << closeInfo->from_account_id_ << senderAccid;
-        
+        YXLOG(Info) << "handleClose, from_account_id_: " << closeInfo->from_account_id_ << ", senderAccid: " << senderAccid << YXLOGEnd;
+
         status_ = idle;
         compEventHandler_.lock()->onCallEnd();
     }
@@ -1085,7 +1109,7 @@ namespace necall_kit
 
     void AvChatComponent::signalingMutilClientSyncCb(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
     {
-        QLOG_APP(L"MutilClientSyncCb");
+        YXLOG(Info) << "MutilClientSyncCb" << YXLOGEnd;
         switch (notifyInfo->event_type_)
         {
         case nim::kNIMSignalingEventTypeAccept:
@@ -1095,7 +1119,7 @@ namespace necall_kit
             handleOtherClientRejected(notifyInfo);
             break;
         default:
-            QLOG_APP(L"MutilClientSyncCb event_type: {0}")<< notifyInfo->event_type_;
+            YXLOG(Info) << "MutilClientSyncCb event_type:" << notifyInfo->event_type_ << YXLOGEnd;
             break;
         }
     }
@@ -1132,17 +1156,16 @@ namespace necall_kit
     ///////////////////////////////G2事件///////////////////////////////
     void AvChatComponent::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) {
         std::string strAccid = getAccid(uid);
-        QLOG_APP(L"onJoinChannel accid: {0}, uid: {1}, cid: {2}, cname: {3}") << strAccid << uid << cid << channelName_;
+        YXLOG(Info) << "onJoinChannel accid:" << strAccid << ", uid: " << uid << ", cid: " << cid << ", cname: "<< channelName_ << YXLOGEnd;
         //rtcEngine_->enableLocalAudio(true);
         compEventHandler_.lock()->onJoinChannel(strAccid, uid, cid, channelName_);
     }
     void AvChatComponent::onUserJoined(nertc::uid_t uid, const char* user_name)
     {
-        QLOG_APP(L"onUserJoined");
+        YXLOG(Info) << "onUserJoined" << YXLOGEnd;
         int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
         //ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
-
-        QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
+        YXLOG(Info) << "subscribeRemoteVideoStream, ret:" << ret << YXLOGEnd;
         
         //对方rtc Join之后 订阅视频流
     }
@@ -1208,7 +1231,7 @@ namespace necall_kit
         Json::Reader reader;
         if (!reader.parse(str, values) || !values.isObject())
         {
-            QLOG_ERR(L"parse custom info failed: {0}") << str;
+            YXLOG(Error) << "parse custom info failed: " << str << YXLOGEnd;
             return false;
         }
         
@@ -1274,7 +1297,7 @@ namespace necall_kit
             std::string body = writer.write(values);;
             nim_http::HttpRequest httpRequest("https://statistic.live.126.net/statics/report/callkit/action", body.c_str(), body.size(), [id](bool ret, int code, const std::string& rsp) {
                 if (!ret) {
-                    QLOG_APP(L"HttpRequest, sttatics: {0}, error: {1}") << id << code;
+                    YXLOG(Info) << "HttpRequest, statics: " << id << ", error: "<< code << YXLOGEnd;
                 }
                 });
             httpRequest.SetTimeout(5000);

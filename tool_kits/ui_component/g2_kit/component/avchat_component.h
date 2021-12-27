@@ -9,12 +9,14 @@
 #ifndef AVCHAT_COMPONENT_H_
 #define AVCHAT_COMPONENT_H_
 
+#include "avchat_component_def.h"
+#include "net_call_helper.h"
+
 #include "src/cpp_sdk/nim/api/nim_cpp_signaling.h"
 #include "nertc_sdk/nertc_engine.h"
 #include "nertc_sdk/nertc_engine_ex.h"
 #include "nertc_sdk/nertc_audio_device_manager.h"
 #include "nertc_sdk/nertc_video_device_manager.h"
-#include "net_call_helper.h"
 
 namespace necall_kit
 {

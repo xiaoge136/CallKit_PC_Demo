@@ -104,12 +104,14 @@
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
       <UndefinePreprocessorDefinitions>__MACHINEX64;__MACHINEARM;__MACHINEARM64;__MACHINEARM_ARM64_X64</UndefinePreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libssld.lib;libcryptod.lib;custom_app_sdk_d.lib;tinyxml_d.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;..\tool_kits\ui_component\g2_kit\component\third_party\alog\lib\x86\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libssld.lib;libcryptod.lib;custom_app_sdk_d.lib;tinyxml_d.lib;ws2_32.lib;yx_alog.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll;NELivePlayer.dll;nim_p2p_sdk_d.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>

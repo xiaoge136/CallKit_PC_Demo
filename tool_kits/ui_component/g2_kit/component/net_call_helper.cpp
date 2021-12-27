@@ -1,5 +1,5 @@
 ﻿#include "net_call_helper.h"
-#include <vector>
+#include "avchat_component_def.h"
 #include "src/cpp_sdk/nim/api/nim_cpp_talk.h"
 #include "src/cpp_sdk/nim/api/nim_cpp_msglog.h"
 
@@ -48,7 +48,7 @@ namespace necall_kit
         reader.parse(msg_attach, json_values);
         if (!json_values.isObject())
         {
-            QLOG_ERR(L"ParseNetCallMsg error: wrong msg attach_: {0}") << msg_attach;
+            YXLOG(Error) << "ParseNetCallMsg error: wrong msg attach_: " << msg_attach << YXLOGEnd;
             return L"";
         }
 
@@ -88,7 +88,7 @@ namespace necall_kit
     {
         if (msg.msg_type_ != nim::kNIMMessageTypeG2NetCall)
         {
-            QLOG_ERR(L"ParseNetCallMsg error: wrong msg type: {0}") << msg.msg_type_;
+            YXLOG(Error) << "ParseNetCallMsg error: wrong msg type: " << msg.msg_type_ << YXLOGEnd;
             return L"";
         }
 
@@ -99,7 +99,7 @@ namespace necall_kit
     {
         if (msg.type_ != nim::kNIMMessageTypeG2NetCall) 
         {
-            QLOG_ERR(L"ParseNetCallMsg error: wrong msg type: {0}") << msg.type_;
+            YXLOG(Error) << "ParseNetCallMsg error: wrong msg type: " << msg.type_ << YXLOGEnd;
             return L"";
         }
         
@@ -110,14 +110,14 @@ namespace necall_kit
     {
         if (arc.rescode_ != 200)
         {
-            QLOG_ERR(L"OnSendNetCallMsgCb error: {0}") << arc.rescode_;
+            YXLOG(Error) << "OnSendNetCallMsgCb error: " << arc.rescode_ << YXLOGEnd;
             return;
         }
 
         nim::MsgLog::QueryMsgByIDAysnc(arc.msg_id_, [arc](nim::NIMResCode res_code, const std::string& msg_id, const nim::IMMessage& msg) {
             if (res_code != 200)
             {
-                QLOG_ERR(L"QueryMsgByIDAysnc error: {0}") << res_code;
+                YXLOG(Error) << "QueryMsgByIDAysnc error: " << res_code << YXLOGEnd;
                 return;
             }
         });

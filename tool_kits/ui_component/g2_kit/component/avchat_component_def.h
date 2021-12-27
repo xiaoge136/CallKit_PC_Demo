@@ -73,11 +73,16 @@ extern"C"
     static const char* kAvChatCallChannelName   = "channelName";
     static const char* kAvCharCallAttachment    = "_attachment";
     
-    #define AVCHAT_LOG_DIR L"Netease\\G2"   /**< nertc日志目录 */
+    #define AVCHAT_LOG_DIR L"Netease\\CallKit\\NeRtc"   /**< nertc日志目录 */
     #define RTC_COMPONENT_VER "1.3.0"       /**< 组件版本 */
 
 #ifdef __cplusplus
 };
 #endif //__cplusplus
+
+#include "third_party/alog/include/alog.h"
+#define YXLOGEnd ALOGEnd
+#define YXLOG(level) ALOG_DIY("callkit", LogNormal, level)
+#define YXLOG_API(level) ALOG_DIY("callkit", LogApi, level)
 
 #endif

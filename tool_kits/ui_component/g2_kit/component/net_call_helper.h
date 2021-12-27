@@ -10,6 +10,8 @@
 #define NET_CALL_HELPER_H_
 
 #include <string>
+#include <vector>
+
 #include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
 
 /*
