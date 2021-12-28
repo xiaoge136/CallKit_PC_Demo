@@ -66,6 +66,9 @@
     <ClInclude Include="component\third_party\util\util.h">
       <Filter>component\third_party\util</Filter>
     </ClInclude>
+    <ClInclude Include="component\avchat_component_def.h">
+      <Filter>component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="g2_kit.cpp">

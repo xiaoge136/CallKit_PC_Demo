@@ -23,7 +23,7 @@ namespace nim_comp
     {
         std::string     appKey;
         std::string     userId;//即为accid
-        int     callType;
+        AVCHAT_CALL_TYPE     callType;
         AvChatComponentOptCb        optCb;
         nertc::onFrameDataCallback  dataCb;
         std::vector<std::string>    members;
@@ -59,13 +59,7 @@ namespace nim_comp
     class AvChatComponentEventHandler : public IAvChatComponentEventHandler
     {
     public:
-        virtual void onInvited(const std::string& invitor,
-            std::vector<std::string> userIDs,
-            bool isFromGroup,
-            const std::string& groupID,
-            int type,
-            const std::string& attachment) override;
-
+        virtual void onInvited(const std::string& invitor, std::vector<std::string> userIDs, bool isFromGroup, const std::string& groupID, AVCHAT_CALL_TYPE type, const std::string& attachment) override;
         virtual void onUserAccept(const std::string& userId) override;
         virtual void onUserReject(const std::string& userId) override;
         virtual void onUserEnter(const std::string& userId) override;

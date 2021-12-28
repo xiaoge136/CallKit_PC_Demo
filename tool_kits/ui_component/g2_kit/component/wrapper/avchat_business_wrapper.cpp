@@ -10,7 +10,7 @@ namespace nim_comp
     AvChatComponent AvChatBusinessWrapper::component;
     std::shared_ptr<AvChatComponentEventHandler> AvChatBusinessWrapper::eventHandler_;
 
-    void AvChatComponentEventHandler::onInvited(const std::string& invitor, std::vector<std::string> userIDs, bool isFromGroup, const std::string& groupID, int type, const std::string& attachment)
+    void AvChatComponentEventHandler::onInvited(const std::string& invitor, std::vector<std::string> userIDs, bool isFromGroup, const std::string& groupID, AVCHAT_CALL_TYPE type, const std::string& attachment)
     {
         QLOG_APP(L"AvChatComponentEventHandler onInvited, invitor: {0}") << invitor;
 
@@ -310,7 +310,7 @@ namespace nim_comp
     void AvChatBusinessWrapper::switchCallType(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.switchCallType(params.sessionId, params.callType);
+        component.switchCallType(params.sessionId, (AVCHAT_CALL_TYPE)params.callType);
     }
     void AvChatBusinessWrapper::setAudioMute(const nbase::BatpPack& request)
     {

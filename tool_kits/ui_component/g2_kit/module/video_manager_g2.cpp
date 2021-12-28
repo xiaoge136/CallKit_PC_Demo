@@ -747,7 +747,7 @@ namespace nim_comp
 		AvChatParams params;
 		bp.head_.action_name_ = kAvChatSwitchCallType;
 		params.sessionId = session_id_;
-		params.callType = call_type;
+		params.callType = (AVCHAT_CALL_TYPE)call_type;
 		bp.body_.param_ = params;
 		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
 	}

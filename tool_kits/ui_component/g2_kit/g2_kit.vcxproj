@@ -183,6 +183,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="component\avchat_component.h" />
+    <ClInclude Include="component\avchat_component_def.h" />
     <ClInclude Include="component\net_call_helper.h" />
     <ClInclude Include="component\third_party\util\util.h" />
     <ClInclude Include="component\wrapper\avchat_business_wrapper.h" />
