@@ -1,4 +1,4 @@
-﻿/** @file nertc_engine_main.h
+﻿/** @file nertc_introduction.h
 * @brief NERTC SDK接口概览。
 * NERTC SDK所有接口参数说明: 所有与字符串相关的参数(char *)全部为UTF-8编码。
 * @copyright (c) 2015-2021, NetEase Inc. All rights reserved
@@ -170,13 +170,18 @@
   </tr>
   <tr>
     <td> \ref nertc::IAudioDeviceManager::adjustRecordingSignalVolume "adjustRecordingSignalVolume"</td>
-    <td>调节录音音量</td>
+    <td>调节采集信号音量。</td>
     <td>V3.5.0</td>
   </tr>
   <tr>
     <td> \ref nertc::IAudioDeviceManager::adjustPlaybackSignalVolume "adjustPlaybackSignalVolume"</td>
-    <td>设置音频编码配置</td>
+    <td>调节本地播放音量。</td>
     <td>V3.5.0</td>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEx::adjustUserPlaybackSignalVolume "adjustUserPlaybackSignalVolume"</td>
+    <td>调节本地播放的指定远端用户的信号音量。</td>
+    <td>V4.2.1</td>
   </tr>
   <tr>
     <td> \ref nertc::IRtcEngine::enableLocalAudio "enableLocalAudio"</td>
@@ -858,6 +863,21 @@
   </tr>
 </table>
 
+ <h2 id="音视频流回退">音视频流回退</h2>
+
+<table>
+  <tr>
+    <th width=400><b>方法</b></th>
+    <th width=600><b>功能</b></th>
+    <th width=200><b>起始版本</b></th>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEx::setLocalMediaPriority "setLocalMediaPriority"</td>
+    <td>设置本地用户的媒体流优先级。</td>
+    <td>V4.2.0</td>
+  </tr>
+</table>
+
  <h2 id="自定义音频采集与渲染">自定义音频采集与渲染</h2>
 
 <table>
@@ -978,6 +998,94 @@
     <td> \ref nertc::IRtcEngineEventHandlerEx::onCaptureVideoFrame "onCaptureVideoFrame"</td>
     <td>采集视频数据回调。</td>
     <td>V3.5.0</td>
+  </tr>
+</table>
+
+ <h2 id="截图">截图</h2>
+
+<table>
+  <tr>
+    <th width=400><b>方法</b></th>
+    <th width=600><b>功能</b></th>
+    <th width=200><b>起始版本</b></th>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEx::takeLocalSnapshot "takeLocalSnapshot"</td>
+    <td>本地视频画面截图。</td>
+    <td>V4.2.0</td>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEx::takeRemoteSnapshot "takeRemoteSnapshot"</td>
+    <td>远端视频画面截图。</td>
+    <td>V4.2.0</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th width=400><b>事件</b></th>
+    <th width=600><b>描述</b></th>
+    <th width=200><b>起始版本</b></th>
+  </tr>
+  <tr>
+    <td> \ref nertc::NERtcTakeSnapshotCallback::onTakeSnapshotResult "onTakeSnapshotResult"</td>
+    <td>截图结果回调。</td>
+    <td>V4.2.0</td>
+  </tr>
+</table>
+
+ <h2 id="水印">水印</h2>
+
+<table>
+  <tr>
+    <th width=400><b>方法</b></th>
+    <th width=600><b>功能</b></th>
+    <th width=200><b>起始版本</b></th>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEx::setLocalCanvasWatermarkConfigs "setLocalCanvasWatermarkConfigs"</td>
+    <td>添加本地视频画布水印。仅支持 Windows 平台。</td>
+    <td>V4.2.0</td>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEx::setRemoteCanvasWatermarkConfigs "setRemoteCanvasWatermarkConfigs"</td>
+    <td>添加远端视频画布水印。仅支持 Windows 平台。</td>
+    <td>V4.2.0</td>
+  </tr>
+</table>
+
+
+<h2 id="客户端音频录制">客户端音频录制</h2>
+
+<table>
+  <tr>
+    <th width=400><b>方法</b></th>
+    <th width=600><b>功能</b></th>
+    <th width=200><b>起始版本</b></th>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEx::startAudioRecording "startAudioRecording"</td>
+    <td>开始客户端录音。</td>
+    <td>V4.2.0</td>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEx::stopAudioRecording "stopAudioRecording"</td>
+    <td>停止客户端录音。</td>
+    <td>V4.2.0</td>
+  </tr>
+</table>
+
+
+<table>
+  <tr>
+    <th width=400><b>事件</b></th>
+    <th width=600><b>描述</b></th>
+    <th width=200><b>起始版本</b></th>
+  </tr>
+  <tr>
+    <td> \ref nertc::IRtcEngineEventHandlerEx::onAudioRecording "onAudioRecording"</td>
+    <td>音频录制状态回调。</td>
+    <td>V4.2.0</td>
   </tr>
 </table>
 
