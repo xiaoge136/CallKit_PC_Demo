@@ -52,7 +52,8 @@
 #include "json/json.h"
 
 //sdk
-#include "include/nim_cpp_api.h"
+#include "nim_cpp_wrapper/nim_cpp_api.h"
+
 
 #include "nim_service/module/service/user_service.h"
 #include "nim_service/module/service/http_service.h"

@@ -18,32 +18,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="convert_utf.c" />
-    <ClCompile Include="json_reader.cpp" />
-    <ClCompile Include="json_value.cpp" />
-    <ClCompile Include="json_writer.cpp" />
-    <ClCompile Include="nim_json_util.cpp" />
-    <ClCompile Include="nim_sdk_util.cpp" />
-    <ClCompile Include="nim_string_util.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\callback_proxy.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\convert_utf.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\assertions.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\autolink.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\config.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\features.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\forwards.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\json.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\reader.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\value.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\version.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\writer.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_json_util.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_sdk_util.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_string_util.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{20F2845C-A2C7-42A2-99F9-52AE69BD6976}</ProjectGuid>

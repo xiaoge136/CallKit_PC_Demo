@@ -87,12 +87,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/;$(ProjectDir)../../nim_sdk/src/cpp_sdk/nim/;$(ProjectDir)../../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -119,7 +120,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/;$(ProjectDir)../../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../../nim_sdk/src/cpp_sdk/nim/;$(ProjectDir)../../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

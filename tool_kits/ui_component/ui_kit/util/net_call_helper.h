@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <string>
-#include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
+
 /*
  *G2 话单解析模块
  *

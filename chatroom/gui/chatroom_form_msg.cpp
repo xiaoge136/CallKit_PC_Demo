@@ -1,7 +1,6 @@
 #include "chatroom_form.h"
 #include "chatroom_frontpage.h"
 #include "shared/cpp_wrapper_util.h"
-#include "src/cpp_sdk/nim_chatroom/helper/nim_chatroom_helper.h"
 #include "module/session/session_util.h"
 #include "gui/login/login_form.h"
 #include "module/service/user_service.h"

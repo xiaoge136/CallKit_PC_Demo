@@ -1,4 +1,7 @@
 #pragma once
+
+#include "nim_chatroom_cpp_wrapper/nim_cpp_chatroom_api.h"
+
 namespace app_sdk
 {
 	//格式化账号密码回调
@@ -6,7 +9,7 @@ namespace app_sdk
 	//注册新账号回调
 	using OnRegisterAccountCallback = std::function<void(int code, const std::string& err_msg)>;
 	//获取聊天室列表回调
-	using OnGetChatroomListCallback = std::function<void(int code, const std::vector< nim_chatroom::ChatRoomInfo>& chatroom_list)>;
+	using OnGetChatroomListCallback = std::function<void(int code, const std::vector<nim_chatroom::ChatRoomInfo>& chatroom_list)>;
 	//获取聊天室地址回调
-	using OnGetChatroomAddressCallback = std::function<void(int code, const std::list< std::string>& address_list)>;
+	using OnGetChatroomAddressCallback = std::function<void(int code, const std::list<std::string>& address_list)>;
 }

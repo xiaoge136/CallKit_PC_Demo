@@ -4,7 +4,6 @@
 #include "g2_kit/component/avchat_component.h"
 #include "g2_kit/component/avchat_component_def.h"
 #include "g2_kit/gui/video_setting_g2.h"
-#include "src/cpp_sdk/nim/api/nim_cpp_client.h"
 
 namespace nim_comp
 {

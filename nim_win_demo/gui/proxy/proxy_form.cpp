@@ -1,7 +1,6 @@
 #include "shared/ui/msgbox.h"
 #include "proxy_form.h"
 #include "base/network/network_util.h"
-#include "public_define/nim_chatroom_define_include.h"
 
 //#include "base/network/http.h"
 //#include "util/NetStateTestHelper.h"

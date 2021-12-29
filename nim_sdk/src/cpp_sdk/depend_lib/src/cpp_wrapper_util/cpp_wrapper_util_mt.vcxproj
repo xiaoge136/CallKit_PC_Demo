@@ -19,30 +19,36 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="convert_utf.c" />
-    <ClCompile Include="json_reader.cpp" />
-    <ClCompile Include="json_value.cpp" />
-    <ClCompile Include="json_writer.cpp" />
-    <ClCompile Include="nim_json_util.cpp" />
-    <ClCompile Include="nim_sdk_util.cpp" />
-    <ClCompile Include="nim_string_util.cpp" />
+    <ClCompile Include="nim_wrapper_util\callback_proxy.cpp" />
+    <ClCompile Include="nim_wrapper_util\convert_utf.c" />
+    <ClCompile Include="nim_wrapper_util\json_reader.cpp" />
+    <ClCompile Include="nim_wrapper_util\json_value.cpp" />
+    <ClCompile Include="nim_wrapper_util\json_writer.cpp" />
+    <ClCompile Include="nim_wrapper_util\nim_json_util.cpp" />
+    <ClCompile Include="nim_wrapper_util\nim_sdk_util.cpp" />
+    <ClCompile Include="nim_wrapper_util\nim_string_util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\callback_proxy.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\convert_utf.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\assertions.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\autolink.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\config.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\features.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\forwards.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\json.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\reader.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\value.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\version.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\writer.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_json_util.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_sdk_util.h" />
-    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_string_util.h" />
+    <ClInclude Include="nim_wrapper_util\callback_proxy.h" />
+    <ClInclude Include="nim_wrapper_util\convert_utf.h" />
+    <ClInclude Include="nim_wrapper_util\json\allocator.h" />
+    <ClInclude Include="nim_wrapper_util\json\assertions.h" />
+    <ClInclude Include="nim_wrapper_util\json\config.h" />
+    <ClInclude Include="nim_wrapper_util\json\forwards.h" />
+    <ClInclude Include="nim_wrapper_util\json\json.h" />
+    <ClInclude Include="nim_wrapper_util\json\json_features.h" />
+    <ClInclude Include="nim_wrapper_util\json\reader.h" />
+    <ClInclude Include="nim_wrapper_util\json\value.h" />
+    <ClInclude Include="nim_wrapper_util\json\version.h" />
+    <ClInclude Include="nim_wrapper_util\json\writer.h" />
+    <ClInclude Include="nim_wrapper_util\json_tool.h" />
+    <ClInclude Include="nim_wrapper_util\nim_json_util.h" />
+    <ClInclude Include="nim_wrapper_util\nim_sdk_util.h" />
+    <ClInclude Include="nim_wrapper_util\nim_string_util.h" />
+    <ClInclude Include="nim_wrapper_util\nim_wrapper_util_include.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="nim_wrapper_util\json_valueiterator.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -125,12 +131,13 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../;$(ProjectDir)../../../../../include/depend_lib/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../;$(ProjectDir)../../../../../include/depend_lib/include/;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -173,10 +180,10 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../;$(ProjectDir)../../../../../include/depend_lib/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../;$(ProjectDir)../../../../../include/depend_lib/include/;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4251;4275;4091;4244;</DisableSpecificWarnings>

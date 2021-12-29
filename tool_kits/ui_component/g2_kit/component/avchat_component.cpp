@@ -1135,7 +1135,6 @@ void sendStatics(const std::string& id, const std::string& appkey) {
         values["version"] = RTC_COMPONENT_VER;
         values["platform"] = "pc";
         std::string body = writer.write(values);
-        ;
         nim_http::HttpRequest httpRequest("https://statistic.live.126.net/statics/report/callkit/action", body.c_str(), body.size(),
                                           [id](bool ret, int code, const std::string& rsp) {
                                               if (!ret) {

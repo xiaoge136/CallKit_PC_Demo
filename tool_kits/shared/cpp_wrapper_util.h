@@ -1,6 +1,6 @@
 #pragma once
 #include "json/json.h"
-#include "include/depend_lib/include/nim_json_util.h"
+#include "nim_wrapper_util/nim_json_util.h"
 namespace shared
 {
 	namespace tools 

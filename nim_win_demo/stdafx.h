@@ -52,12 +52,9 @@
 #include "shared/util.h"
 
 //sdk
-#include "include/nim_cpp_api.h"
-//chatroom
-#include "include/nim_chatroom_cpp_api.h"
-
-//tool
-#include "include/nim_cpp_tools_api.h"
+#include "nim_cpp_wrapper/nim_cpp_api.h"
+#include "nim_chatroom_cpp_wrapper/nim_cpp_chatroom_api.h"
+#include "nim_tools_cpp_wrapper/nim_tools_http_cpp.h"
 
 //helper
 #include "shared/closure.h"

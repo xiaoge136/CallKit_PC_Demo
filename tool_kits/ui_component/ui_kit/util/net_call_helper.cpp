@@ -2,9 +2,6 @@
 #include "net_call_helper.h"
 #include <vector>
 #include "tool_kits/duilib/Utils/MultiLangSupport.h"
-#include "src/cpp_sdk/nim/api/nim_cpp_talk.h"
-#include "src/cpp_sdk/nim/api/nim_cpp_msglog.h"
-#include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
 #include "module/session/session_manager.h"
 
 const static char* kNIMNetCallType = "type";

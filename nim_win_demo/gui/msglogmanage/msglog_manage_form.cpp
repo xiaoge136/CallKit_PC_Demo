@@ -1,5 +1,4 @@
 ﻿#include "resource.h"
-#include "public_define/defines/nim_define/nim_msglog_def.h"
 #include "msglog_manage_form.h"
 #include "gui/main/main_form.h"
 #include "module/msglog_manager/msglog_callback.h"

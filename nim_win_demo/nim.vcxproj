@@ -98,8 +98,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;SUPPORTLOCALPLAYER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_module;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\;..\third_party\crypto++\cryptopp\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\chatroom\;..\app_sdk\include;$(ProjectDir)../nim_sdk/;$(ProjectDir)../sdk/nim_sdk/depend_lib/src/jsoncpp/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_module;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\;..\third_party\crypto++\cryptopp\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\chatroom\;..\app_sdk\include;$(ProjectDir)../nim_sdk/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <DisableSpecificWarnings>4091;4100;4121;4127;4244;4310;4355;4458;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
@@ -148,7 +148,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;SUPPORTLOCALPLAYER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>false</TreatWarningAsError>
       <DisableSpecificWarnings>4091;4100;4121;4127;4244;4310;4355;4458;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_module;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\;..\third_party\crypto++\cryptopp\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\chatroom\;..\app_sdk\include;$(ProjectDir)../nim_sdk/;$(ProjectDir)../sdk/nim_sdk/depend_lib/src/jsoncpp/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_module;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\;..\third_party\crypto++\cryptopp\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\chatroom\;..\app_sdk\include;$(ProjectDir)../nim_sdk/;$(ProjectDir)../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
@@ -196,8 +196,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\audio\nim_audio_cpp.h" />
-    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\http\nim_tools_http_cpp.h" />
+    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\nim_tools_cpp_wrapper\nim_audio_cpp.h" />
+    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\nim_tools_cpp_wrapper\nim_tools_http_cpp.h" />
     <ClInclude Include="app_dump.h" />
     <ClInclude Include="gui\about\about_form.h" />
     <ClInclude Include="gui\cef\cef_chatroom_list.h" />
@@ -238,8 +238,8 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\audio\nim_audio_cpp.cpp" />
-    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\http\nim_tools_http_cpp.cpp" />
+    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\nim_tools_cpp_wrapper\nim_audio_cpp.cpp" />
+    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\nim_tools_cpp_wrapper\nim_tools_http_cpp.cpp" />
     <ClCompile Include="gui\about\about_form.cpp" />
     <ClCompile Include="gui\cef\cef_chatroom_list.cpp" />
     <ClCompile Include="gui\cef\cef_example.cpp" />

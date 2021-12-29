@@ -192,10 +192,10 @@
     <ClInclude Include="module\msglog_manager\msglog_callback.h">
       <Filter>module\msglog_manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\audio\nim_audio_cpp.h">
+    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\nim_tools_cpp_wrapper\nim_audio_cpp.h">
       <Filter>module\tools_sdk</Filter>
     </ClInclude>
-    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\http\nim_tools_http_cpp.h">
+    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\nim_tools_cpp_wrapper\nim_tools_http_cpp.h">
       <Filter>module\tools_sdk</Filter>
     </ClInclude>
   </ItemGroup>
@@ -299,10 +299,10 @@
     <ClCompile Include="module\msglog_manager\msglog_callback.cpp">
       <Filter>module\msglog_manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\audio\nim_audio_cpp.cpp">
+    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\nim_tools_cpp_wrapper\nim_audio_cpp.cpp">
       <Filter>module\tools_sdk</Filter>
     </ClCompile>
-    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\http\nim_tools_http_cpp.cpp">
+    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\nim_tools_cpp_wrapper\nim_tools_http_cpp.cpp">
       <Filter>module\tools_sdk</Filter>
     </ClCompile>
   </ItemGroup>

@@ -56,21 +56,12 @@
 #include "json/json.h"
 
 //sdk
-#include "include/nim_cpp_api.h"
+#include "nim_cpp_wrapper/nim_cpp_api.h"
 
 #include "nim_service/module/service/user_service.h"
 #include "nim_service/module/service/http_service.h"
 #include "nim_service/module/service/photo_service.h"
 #include "nim_service/module/login/login_manager.h"
-
-//sdk
-#include "include/nim_cpp_api.h"
-//chatroom
-#include "include/nim_chatroom_cpp_api.h"
-
-//tool
-#include "include/nim_cpp_tools_api.h"
-
 
 //helper
 #include "shared/closure.h"

@@ -16,12 +16,9 @@
 #include "nertc_sdk/nertc_engine.h"
 #include "nertc_sdk/nertc_engine_ex.h"
 #include "nertc_sdk/nertc_video_device_manager.h"
-#include "src/cpp_sdk/nim/api/nim_cpp_signaling.h"
-#include "nim_sdk/include/depend_lib/include/json/json.h"
-#include "nim_sdk/include/nim_cpp_api.h"
-#include "nim_sdk/include/nim_cpp_tools_api.h"
-#include "src/cpp_sdk/nim/helper/nim_session_helper.h"
-#include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
+
+#include "nim_cpp_wrapper/nim_cpp_api.h"
+#include "nim_tools_cpp_wrapper/nim_tools_http_cpp.h"
 
 #ifdef __cplusplus
 extern "C" {

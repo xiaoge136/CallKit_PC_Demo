@@ -94,10 +94,11 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>.\;..\;..\nim_win_demo\;..\third_party\;..\third_party\jsoncpp\include\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\;$(ProjectDir)../nim_sdk/;$(ProjectDir)../sdk/nim_sdk/depend_lib/src/jsoncpp/include/;..\tool_kits\cef\cef_wrapper\;..\tool_kits\cef\cef_module\;..\tool_kits\cef\cef_render\;..\tool_kits\;..\app_sdk\include;..\tool_kits\ui_component\nim_service\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\nim_win_demo\;..\third_party\;..\third_party\jsoncpp\include\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\;$(ProjectDir)../nim_sdk/;$(ProjectDir)../sdk/nim_sdk/depend_lib/src/jsoncpp/include/;..\tool_kits\cef\cef_wrapper\;..\tool_kits\cef\cef_module\;..\tool_kits\cef\cef_render\;..\tool_kits\;..\app_sdk\include;..\tool_kits\ui_component\nim_service\;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;$(ProjectDir)../nim_sdk/src/c_sdk/nim/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,7 +143,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>.\;..\;..\nim_win_demo\;..\third_party\;..\third_party\jsoncpp\include\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\;$(ProjectDir)../nim_sdk/;$(ProjectDir)../sdk/nim_sdk/depend_lib/src/jsoncpp/include/;..\tool_kits\cef\cef_wrapper\;..\tool_kits\cef\cef_module\;..\tool_kits\cef\cef_render\;..\tool_kits\;..\app_sdk\include;..\tool_kits\ui_component\nim_service\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\nim_win_demo\;..\third_party\;..\third_party\jsoncpp\include\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\;$(ProjectDir)../nim_sdk/;..\tool_kits\cef\cef_wrapper\;..\tool_kits\cef\cef_module\;..\tool_kits\cef\cef_render\;..\tool_kits\;..\app_sdk\include;..\tool_kits\ui_component\nim_service\;$(ProjectDir)../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../nim_sdk/src/cpp_sdk/nim/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>

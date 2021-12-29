@@ -177,15 +177,15 @@ void NimAPP::CleanupSDKBeforLogin()
 {
 	nim::VChat::Cleanup();
 	nim_chatroom::ChatRoom::Cleanup();
-	nim::Client::Cleanup2();	
+	nim::Client::Cleanup2();
 }
 int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {
-	TCHAR module_path[MAX_PATH] = { 0 };	
+	TCHAR module_path[MAX_PATH] = { 0 };
 	std::wstring nim_http_tool_path;
+    std::wstring exe_path;
 	if (GetModuleFileName(NULL, module_path, MAX_PATH) > 0)
 	{
-		std::wstring exe_path;
 		exe_path = module_path;
 		size_t pos = exe_path.find_last_of('\\');
 		if (pos != std::wstring::npos)
@@ -200,7 +200,7 @@ int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLin
 	}
 	// 初始化云信http
 	try {
-		nim_http::Init(nim_http_tool_path);
+		nim_http::Init(nbase::UTF16ToUTF8(exe_path));
 	}
 	catch (const std::exception& e)
 	{

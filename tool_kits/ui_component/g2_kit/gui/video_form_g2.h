@@ -7,7 +7,6 @@
 #include "shared/ring.h"
 #include "bitmap_control_g2.h"
 #include "shared/business_action_gateway/business_manager/business_manager.h"
-#include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
 //#include "helper/ui_bitmap_control.h"
 //#include "record_select.h"
 
