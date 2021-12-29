@@ -9,9 +9,7 @@
 #ifndef AVCHAT_COMPONENT_H_
 #define AVCHAT_COMPONENT_H_
 
-#include "avchat_component_def.h"
-#include "net_call_helper.h"
-#include "third_party/timer/Timer.h"
+#include "necallkit_def.h"
 
 namespace necall_kit {
 /**
@@ -29,6 +27,14 @@ enum AVCHAT_CALL_TYPE {
 enum AVCHAT_MODULE_TYPE {
     kAvChatP2P = 0, /**< 单人 */
     kAvChatMulti    /**< 多人 */
+};
+
+enum NIMNetCallStatus {
+    kNIMNetCallStatusComplete = 1, /**< 1:通话完成 */
+    kNIMNetCallStatusCanceled,     /**< 2:通话取消 */
+    kNIMNetCallStatusRejected,     /**< 3:通话拒绝 */
+    kNIMNetCallStatusTimeout,      /**< 4:超时未接听 */
+    kNIMNetCallStatusBusy,         /**< 5:对方忙线 */
 };
 
 /**
@@ -220,6 +226,8 @@ using AvChatComponentOptCb = std::function<void(int errCode)>;
  * 获取token函数
  */
 using GetTokenServiceFunc = std::function<void(int64_t uid, std::function<void(const std::string& token)> onGetToken)>;
+
+class Timer;
 
 /**
  * @brief 组件实现类
@@ -579,7 +587,7 @@ private:
     nim::SignalingNotifyInfoInvite invitedInfo_;
     nim::SignalingInviteParam invitingInfo_;
     nim::SignalingCreateResParam createdChannelInfo_;
-    necall_kit::Timer calling_timeout_timer_;
+    necall_kit::Timer* calling_timeout_timer_ = nullptr;
     ComponentStatus status_;
     std::string joined_channel_id_;
     int64_t to_account_id_;

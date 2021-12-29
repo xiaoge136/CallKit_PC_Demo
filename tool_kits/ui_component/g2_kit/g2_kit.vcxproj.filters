@@ -16,20 +16,8 @@
     <Filter Include="gui">
       <UniqueIdentifier>{06b8966f-3555-4e4e-a04c-635dbcc80ba9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="component">
-      <UniqueIdentifier>{09b918f7-9461-4522-8a51-36422c01f303}</UniqueIdentifier>
-    </Filter>
     <Filter Include="module">
       <UniqueIdentifier>{c123ba91-e08f-44b6-9c72-2bec4a6051c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="component\wrapper">
-      <UniqueIdentifier>{43a6e55a-6a03-4681-8d32-0e8710d99c01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="component\third_party">
-      <UniqueIdentifier>{66ec5088-3bfa-488c-b6ec-30a14af30988}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="component\third_party\util">
-      <UniqueIdentifier>{399e5e85-57d0-4d8d-b295-db9c74173e89}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -45,12 +33,6 @@
     <ClInclude Include="gui\video_form_g2.h">
       <Filter>gui</Filter>
     </ClInclude>
-    <ClInclude Include="component\avchat_component.h">
-      <Filter>component</Filter>
-    </ClInclude>
-    <ClInclude Include="component\wrapper\avchat_business_wrapper.h">
-      <Filter>component\wrapper</Filter>
-    </ClInclude>
     <ClInclude Include="gui\video_canvas_g2.h">
       <Filter>gui</Filter>
     </ClInclude>
@@ -60,14 +42,8 @@
     <ClInclude Include="gui\video_setting_g2.h">
       <Filter>gui</Filter>
     </ClInclude>
-    <ClInclude Include="component\net_call_helper.h">
-      <Filter>component</Filter>
-    </ClInclude>
-    <ClInclude Include="component\third_party\util\util.h">
-      <Filter>component\third_party\util</Filter>
-    </ClInclude>
-    <ClInclude Include="component\avchat_component_def.h">
-      <Filter>component</Filter>
+    <ClInclude Include="avchat_business_wrapper.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -83,12 +59,6 @@
     <ClCompile Include="gui\video_form_g2.cpp">
       <Filter>gui</Filter>
     </ClCompile>
-    <ClCompile Include="component\avchat_component.cpp">
-      <Filter>component</Filter>
-    </ClCompile>
-    <ClCompile Include="component\wrapper\avchat_business_wrapper.cpp">
-      <Filter>component\wrapper</Filter>
-    </ClCompile>
     <ClCompile Include="gui\video_canvas_g2.cpp">
       <Filter>gui</Filter>
     </ClCompile>
@@ -98,11 +68,8 @@
     <ClCompile Include="gui\video_setting_g2.cpp">
       <Filter>gui</Filter>
     </ClCompile>
-    <ClCompile Include="component\net_call_helper.cpp">
-      <Filter>component</Filter>
-    </ClCompile>
-    <ClCompile Include="component\third_party\util\util.cpp">
-      <Filter>component\third_party\util</Filter>
+    <ClCompile Include="avchat_business_wrapper.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

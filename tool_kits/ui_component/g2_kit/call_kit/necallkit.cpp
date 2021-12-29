@@ -1,10 +1,8 @@
-﻿#include "avchat_component.h"
+﻿#include "include/necallkit.h"
 
-#include <future>
-#include <iostream>
-#include <set>
-
+#include "stable.h"
 #include "third_party/util/util.h"
+#include "third_party/timer/Timer.h"
 
 //#ifdef _WIN64
 //#ifdef _DEBUG
@@ -28,6 +26,13 @@ using namespace std::placeholders;
 const int iCallingTimeoutSeconds = 30;
 std::string g_logPath;
 
+const static char* kNIMNetCallType = "type";
+const static char* kNIMNetCallStatus = "status";
+const static char* kNIMNetCallChannelId = "channelId";
+const static char* kNIMNetCallDurations = "durations";
+const static char* kNIMNetCallDuration = "duration";
+const static char* kNIMNetCallAccid = "accid";
+
 bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName,
                      std::string& attachment);
 int64_t getUid(const std::list<SignalingMemberInfo>& list, const std::string& accid);
@@ -36,11 +41,14 @@ int versionCompare(const std::string& v1, const std::string& v2);
 /** 发送埋点 */
 void sendStatics(const std::string& id, const std::string& appkey);
 
+void sendNetCallMsg(const std::string& to, const std::string& channelId, int type, int status, std::vector<std::string> members, std::vector<int> durations);
+
 AvChatComponent::AvChatComponent() {
     isCameraOpen = true;
     timeOutHurryUp = false;
     isMasterInvited = false;
     isUseRtcSafeMode = false;
+    calling_timeout_timer_ = new necall_kit::Timer();
 
     std::string filePath = necall_kit::UTF16ToUTF8(necall_kit::GetLocalAppDataDir());  // getenv("LOCALAPPDATA");
     if (!filePath.empty()) {
@@ -55,6 +63,11 @@ AvChatComponent::AvChatComponent() {
 }
 
 AvChatComponent::~AvChatComponent() {
+    if (calling_timeout_timer_) {
+        calling_timeout_timer_->stop();
+        delete calling_timeout_timer_;
+        calling_timeout_timer_ = nullptr;
+    }
     if (rtcEngine_) {
         rtcEngine_->release();
         destroyNERtcEngine((void*&)rtcEngine_);
@@ -270,8 +283,8 @@ void AvChatComponent::onWaitingTimeout() {
     handleNetCallMsg(necall_kit::kNIMNetCallStatusTimeout);
 }
 void AvChatComponent::startDialWaitingTimer() {
-    calling_timeout_timer_.stop();
-    calling_timeout_timer_.startOnce(iCallingTimeoutSeconds, [this]() {
+    calling_timeout_timer_->stop();
+    calling_timeout_timer_->startOnce(iCallingTimeoutSeconds, [this]() {
         if (status_ == calling) {
             // closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
             timeOutHurryUp = true;
@@ -283,7 +296,7 @@ void AvChatComponent::startDialWaitingTimer() {
 
 // 被叫方发送ACCEPT，并携带自己版本号(version)
 void AvChatComponent::accept(AvChatComponentOptCb cb) {
-    calling_timeout_timer_.stop();
+    calling_timeout_timer_->stop();
     sendStatics("accept", appKey_);
     //信令accept（自动join）
     SignalingAcceptParam param;
@@ -310,7 +323,7 @@ void AvChatComponent::accept(AvChatComponentOptCb cb) {
 }
 
 void AvChatComponent::reject(AvChatComponentOptCb cb) {
-    calling_timeout_timer_.stop();
+    calling_timeout_timer_->stop();
     if (!isMasterInvited)
         sendStatics("reject", appKey_);
     //信令reject
@@ -764,15 +777,15 @@ void AvChatComponent::handleInvited(std::shared_ptr<SignalingNotifyInfo> notifyI
             }
         });
         //忙线方(被叫方)发送话单
-        SendNetCallMsg(inviteInfo->from_account_id_, param.channel_id_, inviteInfo->channel_info_.channel_type_,
+        sendNetCallMsg(inviteInfo->from_account_id_, param.channel_id_, inviteInfo->channel_info_.channel_type_,
                        isFromGroup ? (int)necall_kit::kNIMNetCallStatusRejected : (int)necall_kit::kNIMNetCallStatusBusy,
                        std::vector<std::string>{inviteInfo->from_account_id_, nim::Client::GetCurrentUserAccount()}, std::vector<int>{0, 0});
         return;
     }
 
     // 接听计时
-    calling_timeout_timer_.stop();
-    calling_timeout_timer_.startOnce(iCallingTimeoutSeconds, [this]() {
+    calling_timeout_timer_->stop();
+    calling_timeout_timer_->startOnce(iCallingTimeoutSeconds, [this]() {
         timeOutHurryUp = true;
         sendStatics("timeout", appKey_);
         compEventHandler_.lock()->onUserCancel(from_account_id_);
@@ -854,7 +867,7 @@ void AvChatComponent::handleNetCallMsg(necall_kit::NIMNetCallStatus why) {
         std::string channel_id = getCreatedChannelInfo().channel_info_.channel_id_;
         std::string session_id = toAccid;
         bool is_video_mode_ = callType == AVCHAT_CALL_TYPE::kAvChatVideo ? true : false;
-        SendNetCallMsg(session_id, channel_id, is_video_mode_ ? 2 : 1, (int)why,
+        sendNetCallMsg(session_id, channel_id, is_video_mode_ ? 2 : 1, (int)why,
                        std::vector<std::string>{session_id, nim::Client::GetCurrentUserAccount()}, std::vector<int>{0, 0});
     }
 }
@@ -928,7 +941,7 @@ void AvChatComponent::handleCancelInvite(std::shared_ptr<nim::SignalingNotifyInf
         timeOutHurryUp = false;
         return;
     }
-    calling_timeout_timer_.stop();
+    calling_timeout_timer_->stop();
     SignalingNotifyInfoCancelInvite* cancelInfo = (SignalingNotifyInfoCancelInvite*)notifyInfo.get();
     compEventHandler_.lock()->onUserCancel(cancelInfo->from_account_id_);
     status_ = idle;
@@ -1135,6 +1148,7 @@ void sendStatics(const std::string& id, const std::string& appkey) {
         values["version"] = RTC_COMPONENT_VER;
         values["platform"] = "pc";
         std::string body = writer.write(values);
+        ;
         nim_http::HttpRequest httpRequest("https://statistic.live.126.net/statics/report/callkit/action", body.c_str(), body.size(),
                                           [id](bool ret, int code, const std::string& rsp) {
                                               if (!ret) {
@@ -1146,4 +1160,29 @@ void sendStatics(const std::string& id, const std::string& appkey) {
         nim_http::PostRequest(httpRequest);
     });
 }
+
+void sendNetCallMsg(const std::string& to, const std::string& channelId, int type, int status, std::vector<std::string> members,
+    std::vector<int> durations) {
+    nim_cpp_wrapper_util::Json::Value values;
+    nim_cpp_wrapper_util::Json::FastWriter writer;
+    values[kNIMNetCallType] = type;
+    values[kNIMNetCallStatus] = status;
+    values[kNIMNetCallChannelId] = channelId;
+    assert(members.size() == durations.size());
+
+    for (int i = 0; i < members.size(); i++) {
+        nim_cpp_wrapper_util::Json::Value info;
+        info[kNIMNetCallAccid] = members[i];
+        info[kNIMNetCallDuration] = durations[i];
+        values[kNIMNetCallDurations].append(info);
+    }
+
+    auto attach_info = writer.write(values);
+    std::string client_msg_id = nim::Tool::GetUuid();
+    nim::MessageSetting setting;
+
+    auto json_msg = nim::Talk::CreateG2NetCallMessage(to, nim::kNIMSessionTypeP2P, client_msg_id, attach_info, setting);
+    nim::Talk::SendMsg(json_msg);
+}
+
 }  // namespace necall_kit

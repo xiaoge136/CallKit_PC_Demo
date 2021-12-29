@@ -12,17 +12,21 @@
 #include <vector>
 #include <atomic>
 
-#include "nertc_sdk/nertc_audio_device_manager.h"
-#include "nertc_sdk/nertc_engine.h"
-#include "nertc_sdk/nertc_engine_ex.h"
-#include "nertc_sdk/nertc_video_device_manager.h"
+// NeRtc头文件
+#include "nertc_engine_ex.h"
+#include "nertc_video_device_manager.h"
+#include "nertc_audio_device_manager.h"
 
+// IM头文件
 #include "nim_cpp_wrapper/nim_cpp_api.h"
 #include "nim_tools_cpp_wrapper/nim_tools_http_cpp.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define RTC_COMPONENT_VER "1.3.1"   /**< 组件版本 */
+
 static const char* kAvChatRelease = "release";
 static const char* kAvChatSetupAppKey = "setupAppKey";
 static const char* kAvChatLogin = "login";
@@ -85,15 +89,9 @@ static const char* kAvChatCallChannelName = "channelName";
 static const char* kAvCharCallAttachment = "_attachment";
 
 #define AVCHAT_LOG_DIR L"Netease\\CallKit\\NeRtc" /**< nertc日志目录 */
-#define RTC_COMPONENT_VER "1.3.0"                 /**< 组件版本 */
 
 #ifdef __cplusplus
 };
 #endif  //__cplusplus
-
-#include "third_party/alog/include/alog.h"
-#define YXLOGEnd ALOGEnd
-#define YXLOG(level) ALOG_DIY("callkit", LogNormal, level)
-#define YXLOG_API(level) ALOG_DIY("callkit", LogApi, level)
 
 #endif

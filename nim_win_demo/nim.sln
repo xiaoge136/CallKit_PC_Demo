@@ -91,6 +91,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpp_wrapper_util_md", "..\nim_sdk\src\cpp_sdk\depend_lib\src\cpp_wrapper_util\cpp_wrapper_util_md.vcxproj", "{20F2845C-A2C7-42A2-99F9-52AE69BD6976}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "g2_kit", "..\tool_kits\ui_component\g2_kit\g2_kit.vcxproj", "{ADE5CF80-5AC9-41A7-AF32-E59D5DEFD4F0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B} = {FCC9D339-44F5-41C1-9533-C0B8511BE15B}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "call_kit", "..\tool_kits\ui_component\g2_kit\call_kit\call_kit.vcxproj", "{FCC9D339-44F5-41C1-9533-C0B8511BE15B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -273,6 +278,14 @@ Global
 		{ADE5CF80-5AC9-41A7-AF32-E59D5DEFD4F0}.Release|Win32.Build.0 = Release|Win32
 		{ADE5CF80-5AC9-41A7-AF32-E59D5DEFD4F0}.Release|x64.ActiveCfg = Release|x64
 		{ADE5CF80-5AC9-41A7-AF32-E59D5DEFD4F0}.Release|x64.Build.0 = Release|x64
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Debug|Win32.Build.0 = Debug|Win32
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Debug|x64.ActiveCfg = Debug|x64
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Debug|x64.Build.0 = Debug|x64
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Release|Win32.ActiveCfg = Release|Win32
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Release|Win32.Build.0 = Release|Win32
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Release|x64.ActiveCfg = Release|x64
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -297,6 +310,7 @@ Global
 		{C98EB0BC-77D8-42A2-95B0-FB1445F86BE5} = {B2E16211-68DE-4D65-A7CA-0A9A88563831}
 		{20F2845C-A2C7-42A2-99F9-52AE69BD6976} = {B2E16211-68DE-4D65-A7CA-0A9A88563831}
 		{ADE5CF80-5AC9-41A7-AF32-E59D5DEFD4F0} = {F5B50326-5715-4F56-9D74-462B34090A17}
+		{FCC9D339-44F5-41C1-9533-C0B8511BE15B} = {F5B50326-5715-4F56-9D74-462B34090A17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F95D23C-9C9F-49F5-B23B-4C394A21F8B1}

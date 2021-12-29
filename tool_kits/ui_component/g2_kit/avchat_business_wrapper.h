@@ -10,7 +10,7 @@
 #define AVCHAT_BUSINESS_WRAPPER_H_
 
 #include "shared/business_action_gateway/batp/batp.h"
-#include "g2_kit/component/avchat_component.h"
+#include "call_kit/include/necallkit.h"
 #include "shared/business_action_gateway/business_manager/business_manager.h"
 
 namespace nim_comp

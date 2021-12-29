@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{ade5cf80-5ac9-41a7-af32-e59d5defd4f0}</ProjectGuid>
+    <ProjectGuid>{FCC9D339-44F5-41C1-9533-C0B8511BE15B}</ProjectGuid>
     <RootNamespace>g2kit</RootNamespace>
     <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -72,14 +72,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\..\libs\</OutDir>
+    <OutDir>..\..\..\..\libs\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_d</TargetName>
+    <TargetName>necallkit_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\..\libs</OutDir>
+    <OutDir>..\..\..\..\libs</OutDir>
     <IntDir>$(ProjectDir)..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>necallkit</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -95,14 +96,15 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../../../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim/;..\..\..\app_sdk\include;$(ProjectDir)../../../nertc_sdk</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(ProjectDir)../../../../nertc_sdk;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/nim/;$(ProjectDir)../../../../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -111,8 +113,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\libs\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>nertc_sdk.lib;necallkit_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\libs\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nertc_sdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +127,7 @@
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;$(ProjectDir)../../../nim_sdk/;..\..\..\app_sdk\include;$(ProjectDir)../../../nertc_sdk;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../../../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim/;$(ProjectDir).</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(ProjectDir)../../../../nertc_sdk;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../../../../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/nim/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -136,10 +138,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>nertc_sdk.lib;necallkit.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nertc_sdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\libs\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\libs\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -148,7 +150,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -165,9 +167,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;CPPWRAPPER_DLL;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;$(ProjectDir)../../../nim_sdk/;..\..\..\app_sdk\include;.\component\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;$(ProjectDir)../../../nim_sdk/;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -183,29 +185,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="avchat_business_wrapper.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="gui\bitmap_control_g2.h" />
-    <ClInclude Include="gui\video_canvas_g2.h" />
-    <ClInclude Include="gui\video_form_g2.h" />
-    <ClInclude Include="gui\video_setting_g2.h" />
-    <ClInclude Include="module\video_manager_g2.h" />
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="include\necallkit.h" />
+    <ClInclude Include="include\necallkit_def.h" />
+    <ClInclude Include="stable.h" />
+    <ClInclude Include="third_party\util\util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="avchat_business_wrapper.cpp" />
-    <ClCompile Include="g2_kit.cpp" />
-    <ClCompile Include="gui\bitmap_control_g2.cpp" />
-    <ClCompile Include="gui\video_canvas_g2.cpp" />
-    <ClCompile Include="gui\video_form_g2.cpp" />
-    <ClCompile Include="gui\video_setting_g2.cpp" />
-    <ClCompile Include="module\video_manager_g2.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="necallkit.cpp" />
+    <ClCompile Include="third_party\util\util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,7 +4,7 @@
 #include "shared/business_action_gateway/batp/batp.h"
 #include "shared/business_action_gateway/business_action_gateway/action_dispatcher.h"
 #include "shared/business_action_gateway/business_action_gateway/business_action_gateway_imp.h"
-#include "g2_kit/component/wrapper/avchat_business_wrapper.h"
+#include "g2_kit/avchat_business_wrapper.h"
 #include "tool_kits/ui_component/ui_kit/util/net_call_helper.h"
 #include "g2_kit/gui/video_setting_g2.h"
 #include "g2_kit/module/g2_device_def.h"

@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
 #include "avchat_business_wrapper.h"
-#include "g2_kit/component/avchat_component.h"
-#include "g2_kit/component/avchat_component_def.h"
 #include "shared/business_action_gateway/business_manager/business_manager.h"
 
 namespace nim_comp

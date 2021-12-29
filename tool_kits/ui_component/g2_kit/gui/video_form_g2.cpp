@@ -4,10 +4,9 @@
 #include "video_canvas_g2.h"
 #include "tool_kits/shared/closure.h"
 #include "tool_kits/ui_component/ui_kit/util/net_call_helper.h"
-#include "g2_kit/component/avchat_component_def.h"
 #include "g2_kit/module/video_manager_g2.h"
 #include "av_kit/module/video/video_manager.h"
-#include "g2_kit/component/wrapper/avchat_business_wrapper.h"
+#include "g2_kit/avchat_business_wrapper.h"
 
 
 //#include <sys/timeb.h>

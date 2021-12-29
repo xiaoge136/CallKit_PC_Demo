@@ -1,8 +1,7 @@
 ﻿#include "pch.h"
 #include "video_setting_g2.h"
 #include "module/video_manager_g2.h"
-#include "g2_kit/component/avchat_component_def.h"
-#include "g2_kit/component/wrapper/avchat_business_wrapper.h"
+#include "g2_kit/avchat_business_wrapper.h"
 
 using namespace ui;
 
