@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{66ec5088-3bfa-488c-b6ec-30a14af30988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\util">
+      <UniqueIdentifier>{399e5e85-57d0-4d8d-b295-db9c74173e89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{ba0f306a-5d57-45ac-8737-072d5d0e2edf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="third_party\util\util.h">
+      <Filter>third_party\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\necallkit.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\necallkit_def.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="stable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="third_party\util\util.cpp">
+      <Filter>third_party\util</Filter>
+    </ClCompile>
+    <ClCompile Include="necallkit.cpp" />
+  </ItemGroup>
+</Project>

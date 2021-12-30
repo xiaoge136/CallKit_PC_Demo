@@ -97,6 +97,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "g2_kit", "..\tool_kits\ui_c
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "call_kit", "..\tool_kits\ui_component\g2_kit\call_kit\call_kit.vcxproj", "{FCC9D339-44F5-41C1-9533-C0B8511BE15B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "call_kit_md", "..\tool_kits\ui_component\g2_kit\call_kit\call_kit_md.vcxproj", "{0CECE1F1-4788-4395-8F95-D4E257972127}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -286,6 +288,14 @@ Global
 		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Release|Win32.Build.0 = Release|Win32
 		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Release|x64.ActiveCfg = Release|x64
 		{FCC9D339-44F5-41C1-9533-C0B8511BE15B}.Release|x64.Build.0 = Release|x64
+		{0CECE1F1-4788-4395-8F95-D4E257972127}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0CECE1F1-4788-4395-8F95-D4E257972127}.Debug|Win32.Build.0 = Debug|Win32
+		{0CECE1F1-4788-4395-8F95-D4E257972127}.Debug|x64.ActiveCfg = Debug|x64
+		{0CECE1F1-4788-4395-8F95-D4E257972127}.Debug|x64.Build.0 = Debug|x64
+		{0CECE1F1-4788-4395-8F95-D4E257972127}.Release|Win32.ActiveCfg = Release|Win32
+		{0CECE1F1-4788-4395-8F95-D4E257972127}.Release|Win32.Build.0 = Release|Win32
+		{0CECE1F1-4788-4395-8F95-D4E257972127}.Release|x64.ActiveCfg = Release|x64
+		{0CECE1F1-4788-4395-8F95-D4E257972127}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -311,6 +321,7 @@ Global
 		{20F2845C-A2C7-42A2-99F9-52AE69BD6976} = {B2E16211-68DE-4D65-A7CA-0A9A88563831}
 		{ADE5CF80-5AC9-41A7-AF32-E59D5DEFD4F0} = {F5B50326-5715-4F56-9D74-462B34090A17}
 		{FCC9D339-44F5-41C1-9533-C0B8511BE15B} = {F5B50326-5715-4F56-9D74-462B34090A17}
+		{0CECE1F1-4788-4395-8F95-D4E257972127} = {F5B50326-5715-4F56-9D74-462B34090A17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F95D23C-9C9F-49F5-B23B-4C394A21F8B1}

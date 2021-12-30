@@ -15,9 +15,11 @@
 #include <ctype.h>
 #include <string.h>
 
+#pragma comment(lib, "Shell32.lib")
+#pragma comment(lib, "Ole32.lib")
+
 namespace necall_kit
 {
-
 #ifndef COUNT_OF
 #define COUNT_OF(array)			(sizeof(array)/sizeof(array[0]))
 #endif
