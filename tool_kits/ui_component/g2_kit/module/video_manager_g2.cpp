@@ -1,7 +1,7 @@
 ﻿
 #include "pch.h"
 #include "video_manager_g2.h"
-#include "g2_kit/call_kit/include/necallkit.h"
+#include "g2_kit/call_kit/include/necallkit_interface.h"
 #include "g2_kit/gui/video_setting_g2.h"
 
 namespace nim_comp

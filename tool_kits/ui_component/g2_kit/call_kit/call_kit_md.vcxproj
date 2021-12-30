@@ -186,9 +186,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\necallkit.h" />
     <ClInclude Include="include\necallkit_def.h" />
+    <ClInclude Include="include\necallkit_interface.h" />
+    <ClInclude Include="necallkit.h" />
     <ClInclude Include="stable.h" />
+    <ClInclude Include="third_party\util\singleton.h" />
     <ClInclude Include="third_party\util\util.h" />
   </ItemGroup>
   <ItemGroup>

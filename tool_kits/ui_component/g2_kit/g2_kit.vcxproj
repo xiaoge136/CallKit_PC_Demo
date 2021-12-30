@@ -112,7 +112,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\libs\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>necallkit_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>necallkit_mt_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -136,7 +136,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>necallkit.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>necallkit_mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\libs\</AdditionalLibraryDirectories>

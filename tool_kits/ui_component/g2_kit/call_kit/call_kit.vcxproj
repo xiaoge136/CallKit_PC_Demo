@@ -74,13 +74,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\..\..\..\libs\</OutDir>
     <IntDir>$(ProjectDir)..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>necallkit_d</TargetName>
+    <TargetName>necallkit_mt_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\..\..\..\libs</OutDir>
     <IntDir>$(ProjectDir)..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
-    <TargetName>necallkit</TargetName>
+    <TargetName>necallkit_mt</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -186,9 +186,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\necallkit.h" />
     <ClInclude Include="include\necallkit_def.h" />
+    <ClInclude Include="include\necallkit_interface.h" />
+    <ClInclude Include="necallkit.h" />
     <ClInclude Include="stable.h" />
+    <ClInclude Include="third_party\util\singleton.h" />
     <ClInclude Include="third_party\util\util.h" />
   </ItemGroup>
   <ItemGroup>

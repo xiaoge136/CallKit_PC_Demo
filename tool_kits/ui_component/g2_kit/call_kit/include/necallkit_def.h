@@ -1,12 +1,12 @@
 ﻿/**
- * @file "avchat_component_def.h"
+ * @file necallkit_def.h
  * @brief 呼叫组件的一些定义
  * @copyright (c) 2014-2021, NetEase Inc. All rights reserved
- * @date 2020/11/03
+ * @date 2021/12/30
  */
 
-#ifndef AVCHAT_COMPONENT_DEF_
-#define AVCHAT_COMPONENT_DEF_
+#ifndef NECALLKIT_DEF_H_
+#define NECALLKIT_DEF_H_
 
 #include <string>
 #include <vector>
@@ -94,4 +94,4 @@ static const char* kAvCharCallAttachment = "_attachment";
 };
 #endif  //__cplusplus
 
-#endif
+#endif // NECALLKIT_DEF_H_

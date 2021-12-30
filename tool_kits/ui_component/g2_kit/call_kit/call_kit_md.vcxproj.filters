@@ -15,13 +15,17 @@
     <ClInclude Include="third_party\util\util.h">
       <Filter>third_party\util</Filter>
     </ClInclude>
-    <ClInclude Include="include\necallkit.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\necallkit_def.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="stable.h" />
+    <ClInclude Include="include\necallkit_interface.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="necallkit.h" />
+    <ClInclude Include="third_party\util\singleton.h">
+      <Filter>third_party\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="third_party\util\util.cpp">

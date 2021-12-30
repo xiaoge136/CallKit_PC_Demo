@@ -1,5 +1,4 @@
-﻿#include "include/necallkit.h"
-
+﻿#include "necallkit.h"
 #include "stable.h"
 #include "third_party/util/util.h"
 #include "third_party/timer/Timer.h"
@@ -43,7 +42,17 @@ void sendStatics(const std::string& id, const std::string& appkey);
 
 void sendNetCallMsg(const std::string& to, const std::string& channelId, int type, int status, std::vector<std::string> members, std::vector<int> durations);
 
-AvChatComponent::AvChatComponent() {
+IAvChatComponent* createChatComponent() {
+    return AvChatComponent::getInstance();
+}
+
+void destroyChatComponent() {
+    if (AvChatComponent::getInstance()) {
+        delete AvChatComponent::getInstance();
+    }
+}
+
+AvChatComponent::AvChatComponent(){
     isCameraOpen = true;
     timeOutHurryUp = false;
     isMasterInvited = false;
@@ -232,6 +241,14 @@ std::wstring AvChatComponent::getAudioDevice(bool isRecord) {
     isRecord ? audio_device_manager->getRecordDevice(device_id) : audio_device_manager->getPlayoutDevice(device_id);
 
     return necall_kit::UTF8ToUTF16(device_id);
+}
+
+nertc::IRtcEngineEx*  AvChatComponent::getRtcEngine() {
+	return rtcEngine_ /*rtcEngine_.get()*/;
+}
+
+void AvChatComponent::setTokenService(GetTokenServiceFunc getTokenService) {
+	getTokenService_ = getTokenService;
 }
 
 std::wstring AvChatComponent::getVideoDevice() {
@@ -592,6 +609,10 @@ void AvChatComponent::setAudioMute(std::string user_id, bool bOpen) {
         int64_t uid = channelMembers_[user_id];
         rtcEngine_->subscribeRemoteAudioStream(uid, bOpen);
     }
+}
+
+nim::SignalingCreateResParam AvChatComponent::getCreatedChannelInfo() {
+	return createdChannelInfo_;
 }
 
 void AvChatComponent::closeChannelInternal(const std::string& channelId, AvChatComponentOptCb cb) {

@@ -10,7 +10,7 @@
 #define AVCHAT_BUSINESS_WRAPPER_H_
 
 #include "shared/business_action_gateway/batp/batp.h"
-#include "call_kit/include/necallkit.h"
+#include "call_kit/include/necallkit_interface.h"
 #include "shared/business_action_gateway/business_manager/business_manager.h"
 
 namespace nim_comp
@@ -136,10 +136,7 @@ namespace nim_comp
 //         static bool isAudioEnable(bool isRecord);
 //         static bool isVideoEnable();
 
-        static AvChatComponent* getComponent(){return &component;}
-        //static void set
     private:
-        static AvChatComponent component;
         static std::shared_ptr<AvChatComponentEventHandler> eventHandler_;
     };
 }

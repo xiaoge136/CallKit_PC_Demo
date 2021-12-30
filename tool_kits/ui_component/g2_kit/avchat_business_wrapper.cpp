@@ -5,9 +5,7 @@
 
 namespace nim_comp
 {
-    AvChatComponent AvChatBusinessWrapper::component;
     std::shared_ptr<AvChatComponentEventHandler> AvChatBusinessWrapper::eventHandler_;
-
     void AvChatComponentEventHandler::onInvited(const std::string& invitor, std::vector<std::string> userIDs, bool isFromGroup, const std::string& groupID, AVCHAT_CALL_TYPE type, const std::string& attachment)
     {
         QLOG_APP(L"AvChatComponentEventHandler onInvited, invitor: {0}") << invitor;
@@ -250,7 +248,7 @@ namespace nim_comp
     void AvChatBusinessWrapper::release(const nbase::BatpPack& request)
     {
         QLOG_APP(L"Release component resource");
-        component.release();
+        createChatComponent()->release();
 
         nbase::BusinessManager::GetInstance()->Response(request);
     }
@@ -259,11 +257,11 @@ namespace nim_comp
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
         std::string key = params.appKey;
         bool bUseRtcSafeMode = params.useRtcSafeMode;
-        component.setupAppKey(key, bUseRtcSafeMode);
+		createChatComponent()->setupAppKey(key, bUseRtcSafeMode);
 
         eventHandler_.reset();
         eventHandler_ = std::make_shared<AvChatComponentEventHandler>();
-        component.regEventHandler(eventHandler_);
+		createChatComponent()->regEventHandler(eventHandler_);
     }
 
     //avchat 组件并未定义onCalling事件，为了通知界面更新状态，在AvChatBusinessWrapper::call中发一个onCalling事件
@@ -273,7 +271,7 @@ namespace nim_comp
         std::string userId = params.userId;
         AVCHAT_CALL_TYPE callType = AVCHAT_CALL_TYPE(params.callType);
 
-        component.call(userId, callType, params.optCb);
+		createChatComponent()->call(userId, callType, params.optCb);
 
         nbase::BatpPack bp;
         bp.head_.action_name_ = kAvChatOnCalling;
@@ -293,37 +291,37 @@ namespace nim_comp
     void AvChatBusinessWrapper::accept(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.accept(params.optCb);
+		createChatComponent()->accept(params.optCb);
     }
     void AvChatBusinessWrapper::reject(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.reject(params.optCb);
+		createChatComponent()->reject(params.optCb);
     }
     void AvChatBusinessWrapper::hangup(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.hangup(params.optCb);
+		createChatComponent()->hangup(params.optCb);
     }
     void AvChatBusinessWrapper::switchCallType(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.switchCallType(params.sessionId, (AVCHAT_CALL_TYPE)params.callType);
+		createChatComponent()->switchCallType(params.sessionId, (AVCHAT_CALL_TYPE)params.callType);
     }
     void AvChatBusinessWrapper::setAudioMute(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.setAudioMute(params.sessionId, params.muteAudio);
+		createChatComponent()->setAudioMute(params.sessionId, params.muteAudio);
     }
     void AvChatBusinessWrapper::cancel(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.cancel(params.optCb);
+		createChatComponent()->cancel(params.optCb);
     }
     void AvChatBusinessWrapper::leave(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.leave(params.optCb);
+		createChatComponent()->leave(params.optCb);
     }
     void AvChatBusinessWrapper::setupLocalView(const nbase::BatpPack& request)
     {
@@ -333,7 +331,7 @@ namespace nim_comp
         canvas.cb = params.dataCb;
         canvas.user_data = nullptr;
         canvas.scaling_mode = nertc::kNERtcVideoScaleFit;
-        component.setupLocalView(&canvas);
+		createChatComponent()->setupLocalView(&canvas);
         nbase::BatpPackResponse response(request.head_, BatpTrailInfoFromHere);
         nbase::BusinessManager::GetInstance()->Response(response);
     }
@@ -346,11 +344,11 @@ namespace nim_comp
         canvas.cb = params.dataCb;
         canvas.user_data = nullptr;
         canvas.scaling_mode = nertc::kNERtcVideoScaleFit;
-        component.setupRemoteView(&canvas, params.userId);
+		createChatComponent()->setupRemoteView(&canvas, params.userId);
     }
     void AvChatBusinessWrapper::switchCamera(const nbase::BatpPack& request)
     {
-        component.switchCamera();
+		createChatComponent()->switchCamera();
     }
     void AvChatBusinessWrapper::getLocalDeviceList(
         std::vector<std::wstring>* recordDevicesNames,
@@ -360,23 +358,23 @@ namespace nim_comp
         std::vector<std::wstring>* videoDeviceNames,
         std::vector<std::wstring>* videoDeviceIds)
     {
-        component.getLocalDeviceList(
+		createChatComponent()->getLocalDeviceList(
             recordDevicesNames, recordDevicesIds,
             playoutDevicesNames, playoutDevicesIds,
             videoDeviceNames, videoDeviceIds);
     }
     unsigned char AvChatBusinessWrapper::getAudioVolumn(bool isRecord)
     {
-        auto value = component.getAudioVolumn(isRecord);
+        auto value = createChatComponent()->getAudioVolumn(isRecord);
         return value <= 255 ? value : value % 255;
     }
     std::wstring AvChatBusinessWrapper::getVideoDevice()
     {
-        return component.getVideoDevice();
+        return createChatComponent()->getVideoDevice();
     }
     std::wstring AvChatBusinessWrapper::getAudioDevice(bool isRecord)
     {
-        return component.getAudioDevice(isRecord);
+        return createChatComponent()->getAudioDevice(isRecord);
     }
 //     bool AvChatBusinessWrapper::isAudioEnable(bool isRecord)
 //     {
@@ -389,67 +387,67 @@ namespace nim_comp
     void AvChatBusinessWrapper::setRecordDeviceVolume(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.setRecordDeviceVolume(params.volume);
+		createChatComponent()->setRecordDeviceVolume(params.volume);
     }
     void AvChatBusinessWrapper::setPlayoutDeviceVolume(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.setPlayoutDeviceVolume(params.volume);
+		createChatComponent()->setPlayoutDeviceVolume(params.volume);
     }
 
     void AvChatBusinessWrapper::setVideoDevice(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.setVideoDevice(params.deviceId);
+		createChatComponent()->setVideoDevice(params.deviceId);
     }
     void AvChatBusinessWrapper::setAudioDevice(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.setAudioDevice(params.deviceId, params.isRecordDevice);
+		createChatComponent()->setAudioDevice(params.deviceId, params.isRecordDevice);
     }
     void AvChatBusinessWrapper::enableLocalVideo(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.enableLocalVideo(params.cameraAvailable);
+		createChatComponent()->enableLocalVideo(params.cameraAvailable);
     }
     void AvChatBusinessWrapper::muteLocalAudio(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.muteLocalAudio(params.muteAudio);
+		createChatComponent()->muteLocalAudio(params.muteAudio);
     }
     void AvChatBusinessWrapper::enableAudioPlayout(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.enableAudioPlayout(params.audioAvailable);
+		createChatComponent()->enableAudioPlayout(params.audioAvailable);
     }
     void AvChatBusinessWrapper::startVideoPreview(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.startVideoPreview(params.startPreview);
+		createChatComponent()->startVideoPreview(params.startPreview);
     }
 
     void AvChatBusinessWrapper::startAudioDeviceLoopbackTest(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.startAudioDeviceLoopbackTest(params.interval);
+		createChatComponent()->startAudioDeviceLoopbackTest(params.interval);
     }
     void AvChatBusinessWrapper::stopAudioDeviceLoopbackTest(const nbase::BatpPack& request)
     {
-        component.stopAudioDeviceLoopbackTest();
+		createChatComponent()->stopAudioDeviceLoopbackTest();
     }
     void AvChatBusinessWrapper::setVideoQuality(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.setVideoQuality((nertc::NERtcVideoProfileType)params.videoQuality);
+		createChatComponent()->setVideoQuality((nertc::NERtcVideoProfileType)params.videoQuality);
     }
     void AvChatBusinessWrapper::getTokenService(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-        component.setTokenService((GetTokenServiceFunc)params.tockenServiceFunc);
+		createChatComponent()->setTokenService((GetTokenServiceFunc)params.tockenServiceFunc);
     }
     std::string AvChatBusinessWrapper::getChannelId()
     {
-        auto info = component.getCreatedChannelInfo();
+        auto info = createChatComponent()->getCreatedChannelInfo();
         return info.channel_info_.channel_id_;
     }
 }
