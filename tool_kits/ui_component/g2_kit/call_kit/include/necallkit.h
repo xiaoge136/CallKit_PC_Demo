@@ -577,7 +577,7 @@ private:
     GetTokenServiceFunc getTokenService_;
     std::string getAccid(int64_t uid);
     std::string appKey_;
-    nertc::IRtcEngineEx* rtcEngine_;
+    nertc::IRtcEngineEx* rtcEngine_ = nullptr;
     // std::string currentChannelId;
     std::weak_ptr<IAvChatComponentEventHandler> compEventHandler_;
     AvChatComponentOptCb optCb_;

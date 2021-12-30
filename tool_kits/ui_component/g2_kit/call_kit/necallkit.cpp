@@ -96,8 +96,7 @@ void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode) {
     assert(rtcEngine_);
 
     std::string logPath = necall_kit::UTF16ToUTF8(necall_kit::GetLocalAppDataDir().append(AVCHAT_LOG_DIR));
-
-    nertc::NERtcEngineContext context;
+    nertc::NERtcEngineContext context = {};
     context.app_key = appKey_.c_str();
     context.event_handler = this;
     context.log_dir_path = logPath.c_str();  // AVCHAT_LOG_DIR;
@@ -116,6 +115,9 @@ void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode) {
 }
 
 int AvChatComponent::setRecordDeviceVolume(int value) {
+    if (!rtcEngine_) {
+        return 0;
+    }
     nertc::IAudioDeviceManager* audio_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
     if (audio_device_manager) {
@@ -125,22 +127,30 @@ int AvChatComponent::setRecordDeviceVolume(int value) {
         }
         return ret;
     }
-    return 1;
+    return 0;
 }
+
 int AvChatComponent::setPlayoutDeviceVolume(int value) {
+    if (!rtcEngine_) {
+        return 0;
+    }
+
     nertc::IAudioDeviceManager* audio_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
     if (audio_device_manager) {
         int ret = audio_device_manager->adjustPlaybackSignalVolume(value);
         if (ret == 0) {
-            YXLOG(Info) << "setPlayoutDeviceVolume seccess" << YXLOGEnd;
+            YXLOG(Info) << "setPlayoutDeviceVolume success" << YXLOGEnd;
             compEventHandler_.lock()->onAudioVolumeChanged(value, false);
         }
         return ret;
     }
-    return 1;
+    return 0;
 }
 uint32_t AvChatComponent::getAudioVolumn(bool isRecord) {
+    if (!rtcEngine_) {
+        return 0;
+    }
     nertc::IAudioDeviceManager* audio_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
     uint32_t volume = 0;
@@ -152,8 +162,13 @@ uint32_t AvChatComponent::getAudioVolumn(bool isRecord) {
 void AvChatComponent::getLocalDeviceList(std::vector<std::wstring>* recordDevicesNames, std::vector<std::wstring>* recordDevicesIds,
                                          std::vector<std::wstring>* playoutDevicesNames, std::vector<std::wstring>* playoutDevicesIds,
                                          std::vector<std::wstring>* videoDeviceNames, std::vector<std::wstring>* videoDeviceIds) {
+    if (!rtcEngine_) {
+        return;
+    }
+
     nertc::IAudioDeviceManager* audio_device_manager = nullptr;
     nertc::IVideoDeviceManager* video_device_manager = nullptr;
+    
     rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
     rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
 
@@ -194,6 +209,9 @@ void AvChatComponent::getLocalDeviceList(std::vector<std::wstring>* recordDevice
     }
 }
 void AvChatComponent::setVideoDevice(const std::wstring& id) {
+    if (!rtcEngine_) {
+        return;
+    }
     nertc::IVideoDeviceManager* video_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
     if (!video_device_manager)
@@ -202,6 +220,9 @@ void AvChatComponent::setVideoDevice(const std::wstring& id) {
 }
 
 std::wstring AvChatComponent::getAudioDevice(bool isRecord) {
+    if (!rtcEngine_) {
+        return L"";
+    }
     nertc::IAudioDeviceManager* audio_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
     if (!audio_device_manager)
@@ -212,7 +233,12 @@ std::wstring AvChatComponent::getAudioDevice(bool isRecord) {
 
     return necall_kit::UTF8ToUTF16(device_id);
 }
+
 std::wstring AvChatComponent::getVideoDevice() {
+    if (!rtcEngine_) {
+        return L"";
+    }
+
     nertc::IVideoDeviceManager* video_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
     if (!video_device_manager)
@@ -225,6 +251,10 @@ std::wstring AvChatComponent::getVideoDevice() {
 }
 
 void AvChatComponent::setAudioDevice(const std::wstring& id, bool isRecord) {
+    if (!rtcEngine_) {
+        return;
+    }
+
     nertc::IAudioDeviceManager* audio_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
 
@@ -246,6 +276,10 @@ void AvChatComponent::logout(AvChatComponentOptCb cb) {
 // 呼叫方首先发送INVITE，扩展字段携带自身版本号(version)及动态channelName，即<channelId> | 0 | <uid>，并直接预加载token。
 // 0代表1v1，uid为信令房间返回的用户uid；1代表group呼叫，uid传群组teamId
 void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb) {
+    if (!rtcEngine_) {
+        return;
+    }
+
     sendStatics("call", appKey_);
     channelMembers_.clear();
     version_.clear();
@@ -341,7 +375,10 @@ void AvChatComponent::reject(AvChatComponentOptCb cb) {
 }
 
 void AvChatComponent::hangup(AvChatComponentOptCb cb) {
-    rtcEngine_->leaveChannel();
+    if (rtcEngine_) {
+        rtcEngine_->leaveChannel();
+    }
+    
     if (status_ == idle) {
         YXLOG(Info) << "The AvChatComponent status is idle, discard hangup operation" << YXLOGEnd;
         return;
@@ -390,7 +427,9 @@ void AvChatComponent::cancel(AvChatComponentOptCb cb) {
 
             Signaling::CancelInvite(param, nullptr);
         }
-        rtcEngine_->leaveChannel();
+        if (rtcEngine_) {
+            rtcEngine_->leaveChannel();
+        }
         closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, cb);
     } else {
         YXLOG(Error) << "cancel error" << YXLOGEnd;
@@ -399,7 +438,9 @@ void AvChatComponent::cancel(AvChatComponentOptCb cb) {
     }
 }
 void AvChatComponent::leave(AvChatComponentOptCb cb) {
-    rtcEngine_->leaveChannel();
+    if (rtcEngine_) {
+        rtcEngine_->leaveChannel();
+    }
     if (!joined_channel_id_.empty()) {
         nim::SignalingLeaveParam param;
         param.channel_id_ = joined_channel_id_;
@@ -413,11 +454,17 @@ void AvChatComponent::leave(AvChatComponentOptCb cb) {
 }
 void AvChatComponent::setupLocalView(nertc::NERtcVideoCanvas* canvas) {
     assert(rtcEngine_ && canvas);
+    if (!rtcEngine_) {
+        return;
+    }
     int ret = rtcEngine_->setupLocalVideoCanvas(canvas);
     YXLOG(Info) << "setupLocalView ret: " << ret << YXLOGEnd;
 }
 void AvChatComponent::setupRemoteView(nertc::NERtcVideoCanvas* canvas, const std::string& userId) {
     assert(rtcEngine_);
+    if (!rtcEngine_) {
+        return;
+    }
     int64_t uid = channelMembers_[userId];
     int ret = rtcEngine_->setupRemoteVideoCanvas(uid, canvas);
     YXLOG(Info) << "setupLocalView ret: " << ret << YXLOGEnd;
@@ -431,12 +478,20 @@ void AvChatComponent::switchCamera() {
 }
 void AvChatComponent::enableLocalVideo(bool enable) {
     assert(rtcEngine_);
+    if (!rtcEngine_) {
+        return;
+    }
+
     int ret = rtcEngine_->enableLocalVideo(enable);
     YXLOG(Info) << "enableLocalVideo ret: " << ret << YXLOGEnd;
 }
 //音频输入设备静音
 void AvChatComponent::muteLocalAudio(bool mute) {
     assert(rtcEngine_);
+    if (!rtcEngine_) {
+        return;
+    }
+
     YXLOG(Info) << "muteLocalAudio, mute: " << mute << YXLOGEnd;
     int ret = rtcEngine_->enableLocalAudio(!mute);
     if (0 != ret) {
@@ -444,6 +499,9 @@ void AvChatComponent::muteLocalAudio(bool mute) {
     }
 }
 void AvChatComponent::enableAudioPlayout(bool enable) {
+    if (!rtcEngine_) {
+        return;
+    }
     rtcEngine_->muteLocalAudioStream(!enable);
 }
 
@@ -453,6 +511,10 @@ void AvChatComponent::regEventHandler(std::shared_ptr<IAvChatComponentEventHandl
 }
 
 void AvChatComponent::startVideoPreview(bool start /* = true*/) {
+    if (!rtcEngine_) {
+        return;
+    }
+
     if (start)
         rtcEngine_->enableLocalVideo(true);
     start ? rtcEngine_->startVideoPreview() : rtcEngine_->stopVideoPreview();
@@ -484,6 +546,10 @@ void AvChatComponent::switchCallType(std::string user_id, AVCHAT_CALL_TYPE type)
 }
 
 void AvChatComponent::startAudioDeviceLoopbackTest(int interval) {
+    if (!rtcEngine_) {
+        return;
+    }
+
     nertc::IAudioDeviceManager* audio_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
 
@@ -510,7 +576,11 @@ void AvChatComponent::requestTokenValue(int64_t uid) {
 }
 
 void AvChatComponent::setVideoQuality(nertc::NERtcVideoProfileType type) {
-    nertc::NERtcVideoConfig config;
+    if (!rtcEngine_) {
+        return;
+    }
+
+    nertc::NERtcVideoConfig config = {};
     config.max_profile = type;
     config.framerate = nertc::kNERtcVideoFramerateFps_15;
     config.crop_mode_ = nertc::kNERtcVideoCropModeDefault;
@@ -573,7 +643,10 @@ void AvChatComponent::signalingAcceptCb(int errCode, std::shared_ptr<nim::Signal
             if (isUseRtcSafeMode)
                 strToken = stoken_;
             YXLOG(Info) << "handleControl strToken: " << strToken << YXLOGEnd;
-            int ret = rtcEngine_->joinChannel(strToken.c_str(), channelName_.c_str(), uid);
+            int ret = 0;
+            if (rtcEngine_) {
+                rtcEngine_->joinChannel(strToken.c_str(), channelName_.c_str(), uid);
+            }
             if (ret != 0) {
                 YXLOG(Error) << "nertc join channel failed, ret: " << ret << YXLOGEnd;
                 if (cb)
@@ -683,8 +756,7 @@ void AvChatComponent::signalingCreateCb(int errCode, std::shared_ptr<SignalingRe
     joinParam.uid_ = 0;  // 0，服务器会自动分配
     joinParam.offline_enabled_ = true;
 
-    auto joinCb =
-        std::bind(&AvChatComponent::signalingJoinCb, this, std::placeholders::_1, std::placeholders::_2, cb, res->channel_info_.channel_id_);
+    auto joinCb = std::bind(&AvChatComponent::signalingJoinCb, this, std::placeholders::_1, std::placeholders::_2, cb, res->channel_info_.channel_id_);
     // 2.信令Join
     Signaling::Join(joinParam, joinCb);
 }

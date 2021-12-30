@@ -113,8 +113,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\..\libs\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>nertc_sdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\libs\;..\..\..\..\bin\;$(ProjectDir)./third_party\alog\lib\x86\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nertc_sdk.lib;yx_alog.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,6 +129,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>.\;$(ProjectDir)../../../../nertc_sdk;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../../../../nim_sdk/src/c_sdk/nim/;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../../../../nim_sdk/src/cpp_sdk/nim/</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -138,10 +139,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>nertc_sdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nertc_sdk.lib;yx_alog.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\..\libs\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\libs\;..\..\..\..\bin\;$(ProjectDir)./third_party\alog\lib\x86\Release</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

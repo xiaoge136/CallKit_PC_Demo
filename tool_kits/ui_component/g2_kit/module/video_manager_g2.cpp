@@ -110,6 +110,7 @@ namespace nim_comp
 		AvChatParams params;
 		params.appKey = appkey;// nim::Client::GetCurrentUserAccount();
 		params.useRtcSafeMode = true;  //是否开启安全模式，true表示开启，false表示关闭
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatSetupAppKey;
 		bp.body_.param_ = params;
 		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
@@ -124,6 +125,7 @@ namespace nim_comp
 	void VideoManagerG2::UnInit(StdClosure cb)
 	{
 		nbase::BatpPack bp;
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatRelease;
 		nbase::BusinessManager::GetInstance()->Request(bp, [cb](const nbase::BatpPack& response) {
 			if (cb)
@@ -189,6 +191,7 @@ namespace nim_comp
 		if (isSender)
 		{
 			nbase::BatpPack bp;
+            bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 			AvChatParams params;
 			params.userId = session_id;// nim::Client::GetCurrentUserAccount();
 			params.callType = is_video_mode_ ? kAvChatVideo : kAvChatAudio;
@@ -262,6 +265,7 @@ namespace nim_comp
 		AvChatParams params;
 		params.volume = volumn;
 		nbase::BatpPack bp;
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = capture ? kAvChatSetRecordVolume : kAvChatSetPlayoutVolume;
 		bp.body_.param_ = params;
 		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
@@ -346,7 +350,7 @@ namespace nim_comp
 	{
 		AvChatParams param;
 		nbase::BatpPack bp;
-
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatEnableLocalVideo;
 		param.cameraAvailable = enable;
 		bp.body_.param_ = param;
@@ -357,7 +361,7 @@ namespace nim_comp
 	{
 		AvChatParams param;
 		nbase::BatpPack bp;
-
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		if (isRecord)
 		{
 			bp.head_.action_name_ = kAvChatMuteLocalAudio;
@@ -408,7 +412,7 @@ namespace nim_comp
 			return;
 		AvChatParams param;
 		nbase::BatpPack bp;
-
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatSetVideoDevice;
 		param.deviceId = id;
 		bp.body_.param_ = param;
@@ -432,7 +436,7 @@ namespace nim_comp
 
 		AvChatParams param;
 		nbase::BatpPack bp;
-
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatSetAudioDevice;
 		param.deviceId = id;
 		param.isRecordDevice = isRecord;
@@ -462,6 +466,7 @@ namespace nim_comp
 		};
 
 		nbase::BatpPack bp_canvas;
+        bp_canvas.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp_canvas.head_.action_name_ = kAvChatSetupRemoteView;
 		AvChatParams canvas_params;
 		canvas_params.window = NULL;
@@ -494,6 +499,7 @@ namespace nim_comp
 		};
 		//设置本地画布
 		nbase::BatpPack bp_canvas;
+        bp_canvas.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp_canvas.head_.action_name_ = kAvChatSetupLocalView;
 		AvChatParams canvas_params;
 		canvas_params.window = NULL;
@@ -524,6 +530,7 @@ namespace nim_comp
 		nbase::BatpPack bp;
 		AvChatParams params;
 		params.optCb = nbase::Bind(acceptCb, std::placeholders::_1);
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatAccept;
 		bp.body_.param_ = params;
 		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
@@ -710,6 +717,7 @@ namespace nim_comp
 	void VideoManagerG2::StartAudioPreview(bool start/* = true*/)
 	{
 		nbase::BatpPack bp;
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = start ? kAvChatStartAudioDeviceLoopbackTest : kAvChatStopAudioDeviceLoopbackTest;
 		AvChatParams params;
 		params.interval = 0;
@@ -720,6 +728,7 @@ namespace nim_comp
 	void VideoManagerG2::SetVideoQuality(int type)
 	{
 		nbase::BatpPack bp;
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatSetVideoQuality;
 		AvChatParams params;
 		params.videoQuality = type;
@@ -731,6 +740,7 @@ namespace nim_comp
 	void VideoManagerG2::StartVideoPreview(bool start/* = true*/)
 	{
 		nbase::BatpPack bp;
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatStartVideoPreview;
 		AvChatParams params;
 		params.startPreview = start;
@@ -743,6 +753,7 @@ namespace nim_comp
 	{
 		nbase::BatpPack bp;
 		AvChatParams params;
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatSwitchCallType;
 		params.sessionId = session_id_;
 		params.callType = (AVCHAT_CALL_TYPE)call_type;
@@ -754,6 +765,7 @@ namespace nim_comp
 	{
 		nbase::BatpPack bp;
 		AvChatParams params;
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatSetAudioMute;
 		params.sessionId = session_id_;
 		params.muteAudio = bMute;

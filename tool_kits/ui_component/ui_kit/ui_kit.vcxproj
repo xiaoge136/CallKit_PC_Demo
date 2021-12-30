@@ -106,8 +106,8 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;duilib_d.lib;nim_capture_image_d.lib;g2_kit_d.lib;necallkit_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\libs\;$(ProjectDir)../../../sdk/nim_sdk/cpp_sdk/libs/x86/mt/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;duilib_d.lib;nim_capture_image_d.lib;g2_kit_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\libs\;$(ProjectDir)../../../sdk/nim_sdk/cpp_sdk/libs/x86/mt/;..\..\..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -152,10 +152,10 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib;g2_kit.lib;necallkit.lib</AdditionalDependencies>
+      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib;g2_kit.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\libs\;$(ProjectDir)../../../sdk/nim_sdk/cpp_sdk/libs/x86/mt/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\libs\;$(ProjectDir)../../../sdk/nim_sdk/cpp_sdk/libs/x86/mt/;..\..\..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

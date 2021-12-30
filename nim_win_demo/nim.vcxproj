@@ -110,8 +110,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;..\tool_kits\ui_component\g2_kit\call_kit\third_party\alog\lib\x86\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libssld.lib;libcryptod.lib;custom_app_sdk_d.lib;tinyxml_d.lib;ws2_32.lib;yx_alog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libssld.lib;libcryptod.lib;custom_app_sdk_d.lib;tinyxml_d.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll;NELivePlayer.dll;nim_p2p_sdk_d.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -158,8 +158,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;Crypt32.lib;yx_alog.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;..\tool_kits\ui_component\g2_kit\call_kit\third_party\alog\lib\x86\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll;NELivePlayer.dll</DelayLoadDLLs>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>

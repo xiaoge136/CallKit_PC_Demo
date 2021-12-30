@@ -1149,9 +1149,9 @@ typedef enum {
 
 /** 媒体流转发相关的数据结构 */
 struct NERtcChannelMediaRelayInfo {
-    const char channel_name[kNERtcMaxChannelNameLength];    /**< 转发媒体流对应的目标房间名 */
-    const char channel_token[kNERtcMaxTokenLength];         /**< 转发媒体流对应的目标房间token */
-    uid_t      uid;                                         /**< 转发到对应的目标房间的uId, 可与当前房间的uId不一致 */
+    char channel_name[kNERtcMaxChannelNameLength];    /**< 转发媒体流对应的目标房间名 */
+    char channel_token[kNERtcMaxTokenLength];         /**< 转发媒体流对应的目标房间token */
+    uid_t      uid;                                   /**< 转发到对应的目标房间的uId, 可与当前房间的uId不一致 */
 };
 
 /** 媒体流转发配置信息 */
