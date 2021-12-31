@@ -8,87 +8,77 @@
 #include <memory>
 #include <mutex>
 #include <condition_variable>
+
 namespace necall_kit
 {
 
-class Timer
-{
-public:
-	Timer() : _expired(true), _try_to_expire(false)
-	{}
+class Timer {
+private:
+	std::string name;
+	std::thread *thread = nullptr;
+	std::mutex mutex;
+	std::atomic<bool> expired;
+	std::condition_variable cond;
 
-	Timer(const Timer& timer)
-	{
-		_expired = timer._expired.load();
-		_try_to_expire = timer._try_to_expire.load();
+public:
+	explicit Timer(const std::string &timerName) : expired(true) {
+		name = timerName;
 	}
 
-	~Timer()
-	{
+	~Timer() {
 		stop();
 	}
 
-	void start(int interval, std::function<void()> task)
-	{
-		// is started, do not start again
-		if (_expired == false)
+	void startTimer(int interval, int loop, std::function<void()> task) {
+
+		if (expired == false) {
+			std::cout << "timer[" << name << "] already started" << std::endl;
 			return;
-
-		// start async timer, launch thread and wait in that thread
-		_expired = false;
-		std::thread([this, interval, task]() {
-			while (!_try_to_expire)
-			{
-				// sleep every interval and do the task again and again until times up
-				std::this_thread::sleep_for(std::chrono::milliseconds(interval));
-				task();
-			}
-
-			{
-				// timer be stopped, update the condition variable expired and wake main thread
-				std::lock_guard<std::mutex> locker(_mutex);
-				_expired = true;
-				_expired_cond.notify_one();
-			}
-		}).detach();
-	}
-
-	void startOnce(int delay, std::function<void()> task)
-	{
-		std::thread([delay, task]() {
-			std::this_thread::sleep_for(std::chrono::seconds(delay));
-			task();
-		}).detach();
-	}
-
-	void stop()
-	{
-		// do not stop again
-		if (_expired)
-			return;
-
-		if (_try_to_expire)
-			return;
-
-		// wait until timer 
-		_try_to_expire = true; // change this bool value to make timer while loop stop
-		{
-			std::unique_lock<std::mutex> locker(_mutex);
-			_expired_cond.wait(locker, [this] {return _expired == true; });
-
-			// reset the timer
-			if (_expired == true)
-				_try_to_expire = false;
 		}
+		
+		if (thread) {
+			cond.notify_all();
+			thread->join();
+			delete thread;
+			thread = nullptr;
+		}
+
+		expired = false;
+		thread = new std::thread([this, interval, loop, task]() mutable {
+			std::cout << "timer[" << name << "] thread start" << std::endl;
+			const std::chrono::milliseconds &ms = std::chrono::milliseconds(interval);
+			while (loop--) {
+				std::unique_lock<std::mutex> lock(mutex);
+				std::cv_status status = cond.wait_for(lock, ms);
+				if (std::cv_status::timeout == status) {
+					task();
+					loop = 0;
+					break;
+				}
+				else {
+					std::cout << "timer[" << name << "] wait break" << std::endl;
+					loop = 0;
+					break;
+				}
+			}
+			expired = true;
+			std::cout << "timer[" << name << "] thread finish" << std::endl;
+		});
 	}
 
-private:
-	std::atomic<bool> _expired; // timer stopped status
-	std::atomic<bool> _try_to_expire; // timer is in stop process
-	std::mutex _mutex;
-	std::condition_variable _expired_cond;
+	void stop() {
+		if (expired == true) {
+			std::cout << "timer[" << name << "] already stopped" << std::endl;
+			return;
+		}
+		{
+			std::cout << "timer[" << name << "] stop notify" << std::endl;
+			std::unique_lock<std::mutex> lock{ mutex };
+			cond.notify_one();
+		}
+		std::cout << "timer[" << name << "] stop finish" << std::endl;
+	}
 };
-
 }
 
 #endif // !_TIMER_H_

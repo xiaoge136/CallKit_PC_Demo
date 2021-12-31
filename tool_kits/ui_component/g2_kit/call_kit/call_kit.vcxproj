@@ -186,7 +186,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\necallkit_def.h" />
     <ClInclude Include="include\necallkit_interface.h" />
     <ClInclude Include="necallkit.h" />
     <ClInclude Include="stable.h" />

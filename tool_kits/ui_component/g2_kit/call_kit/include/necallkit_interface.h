@@ -8,9 +8,21 @@
 #ifndef NECALLKIT_INTERFACE_H_
 #define NECALLKIT_INTERFACE_H_
 
-#include "necallkit_def.h"
+#include <string>
+#include <vector>
+#include <memory>
+
+// NeRtc
+#include "nertc_engine_ex.h"
+#include "nertc_video_device_manager.h"
+#include "nertc_audio_device_manager.h"
+
+// NeIM
+#include "nim_cpp_wrapper/nim_cpp_api.h"
+#include "nim_tools_cpp_wrapper/nim_tools_http_cpp.h"
 
 namespace necall_kit {
+
 /**
  * 呼叫类型，与nim::NIMSignalingType同值
  */
@@ -28,14 +40,14 @@ public:
     /**
      * @brief 收到邀请
      * @param invitor 邀请者的用户id
-     * @param userIDs 通话里的用户id列表
+     * @param userIds 通话里的用户id列表
      * @param isFromGroup 是否为多人通话
-     * @param groupID 透传groupCall传入的groupID，1to1则为空
+     * @param groupId 透传groupCall传入的groupId，1to1则为空
      * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
      * @param attachment 附件信息
      * @return void
      */
-    virtual void onInvited(const std::string& invitor, std::vector<std::string> userIDs, bool isFromGroup, const std::string& groupID,
+    virtual void onInvited(const std::string& invitor, std::vector<std::string> userIds, bool isFromGroup, const std::string& groupId,
                            AVCHAT_CALL_TYPE type, const std::string& attachment){};
 
     /**
@@ -43,115 +55,100 @@ public:
      * @param userId 用户id
      * @return void
      */
-    virtual void onUserAccept(const std::string& userId) {
-    }
+    virtual void onUserAccept(const std::string& userId) {}
 
     /**
      * @brief 收到用户拒绝
      * @param userId  用户id
      * @return void
      */
-    virtual void onUserReject(const std::string& userId) {
-    }
+    virtual void onUserReject(const std::string& userId) {}
 
     /**
      * @brief 收到用户加入
      * @param userId 用户id
      * @return void
      */
-    virtual void onUserEnter(const std::string& userId) {
-    }
+    virtual void onUserEnter(const std::string& userId) {}
 
     /**
      * @brief 收到用户离开
      * @param userId 用户id
      * @return void
      */
-    virtual void onUserLeave(const std::string& userId) {
-    }
+    virtual void onUserLeave(const std::string& userId) {}
 
     /**
      * @brief 收到用户断开连接
      * @param userId 用户id
      * @return void
      */
-    virtual void onUserDisconnect(const std::string& userId) {
-    }
+    virtual void onUserDisconnect(const std::string& userId) {}
 
     /**
      * @brief 收到用户忙碌
      * @param userId 用户id
      * @return void
      */
-    virtual void onUserBusy(const std::string& userId) {
-    }
+    virtual void onUserBusy(const std::string& userId) {}
 
     /**
      * @brief 收到用户取消
      * @param userId 用户id
      * @return void
      */
-    virtual void onUserCancel(const std::string& userId) {
-    }
+    virtual void onUserCancel(const std::string& userId) {}
 
     /**
-     * @brief 收到G2断开连接
+     * @brief 收到NeRtc断开连接
      * @param reason 断开的原因 {@see nertc::NERtcErrorCode}
      * @return void
      */
-    virtual void onDisconnect(int reason) {
-    }
+    virtual void onDisconnect(int reason) {}
 
     /**
      * @brief 收到呼叫超时
      * @return void
      */
-    virtual void onCallingTimeOut() {
-    }
+    virtual void onCallingTimeOut() {}
 
     /**
      * @brief 收到视频切换成音频
      * @return void
      */
-    virtual void OnVideoToAudio() {
-    }
+    virtual void OnVideoToAudio() {}
 
     /**
      * @brief 收到呼叫结束
      * @return void
      */
-    virtual void onCallEnd() {
-    }
+    virtual void onCallEnd() {}
 
     /**
      * @brief 收到G2错误
      * @param errCode G2错误码 {@see nertc::NERtcErrorCode}
      * @return void
      */
-    virtual void onError(int errCode) {
-    }
+    virtual void onError(int errCode) {}
 
     /**
      * @brief 收到其他端接受
      * @return void
      */
-    virtual void onOtherClientAccept() {
-    }
+    virtual void onOtherClientAccept() {}
 
     /**
      * @brief 收到其他端拒绝
      * @return void
      */
-    virtual void onOtherClientReject() {
-    }
+    virtual void onOtherClientReject() {}
 
     /**
      * @brief 收到用户网络质量
      * @param mapNetworkQuality 用户的网络质量列表
      * @return void
      */
-    virtual void onUserNetworkQuality(std::map<uint64_t, nertc::NERtcNetworkQualityType> mapNetworkQuality) {
-    }
+    virtual void onUserNetworkQuality(std::map<uint64_t, nertc::NERtcNetworkQualityType> mapNetworkQuality) {}
 
     /**
      * @brief 收到用户视频开关状态
@@ -159,8 +156,7 @@ public:
      * @param available 视频是开关状态，ture开，false关
      * @return void
      */
-    virtual void onCameraAvailable(const std::string& userId, bool available) {
-    }
+    virtual void onCameraAvailable(const std::string& userId, bool available) {}
 
     /**
      * @brief 收到用户音频开关状态
@@ -168,16 +164,14 @@ public:
      * @param available 视频是开关状态，ture开，false关
      * @return void
      */
-    virtual void onAudioAvailable(const std::string& userId, bool available) {
-    }
+    virtual void onAudioAvailable(const std::string& userId, bool available) {}
 
     /**
      * @brief 本地视频状态改变
      * @param isEnable 视频状态，ture开，false关
      * @return void
      */
-    virtual void onLocalCameraStateChanged(bool isEnable) {
-    }
+    virtual void onLocalCameraStateChanged(bool isEnable) {}
 
     /**
      * @brief 音频音量改变
@@ -185,8 +179,7 @@ public:
      * @param isRecord 是否为麦克风，true麦克风，false扬声器
      * @return void
      */
-    virtual void onAudioVolumeChanged(unsigned char value, bool isRecord) {
-    }
+    virtual void onAudioVolumeChanged(unsigned char value, bool isRecord) {}
 
     /**
      * @brief 当前用户加入音视频的回调
@@ -196,8 +189,7 @@ public:
      * @param cname 音视频通道名称
      * @return void
      */
-    virtual void onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname) {
-    }
+    virtual void onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname) {}
 };
 
 /**
@@ -214,14 +206,6 @@ using GetTokenServiceFunc = std::function<void(int64_t uid, std::function<void(c
  * @brief 组件接口类
  */
 class IAvChatComponent {
-public:
-    enum ComponentStatus {
-        idle = 0, /**< 空闲 */
-        calling,  /**< 呼叫中 */
-        called,   /**< 被邀请 */
-        inCall,   /**< 在通道 */
-    };
-    
 public:
     virtual ~IAvChatComponent() = default;
     /**
@@ -342,11 +326,11 @@ public:
     /**
      * @brief 切换呼叫类型
      * @note 目前只支持视频切换到音频
-     * @param user_id 用户id
+     * @param userId 用户id
      * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
      * @return void
      */
-    virtual void switchCallType(std::string user_id, AVCHAT_CALL_TYPE type) = 0;
+    virtual void switchCallType(std::string userId, AVCHAT_CALL_TYPE type) = 0;
 
     /**
      * @brief 开始音频设备回路测试
@@ -377,11 +361,11 @@ public:
 
     /**
      * @brief 打开用户音频
-     * @param user_id 用户id
+     * @param userId 用户id
      * @param bOpen 是否打开用户音频，true打开，false关闭
      * @return void
      */
-    virtual void setAudioMute(std::string user_id, bool bOpen) = 0;
+    virtual void setAudioMute(std::string userId, bool bOpen) = 0;
 
     /**
      * @brief 获取频道信息
@@ -393,7 +377,7 @@ public:
      * @brief 呼叫等待超时
      * @return void
      */
-    virtual void onWaitingTimeout() = 0;
+    //virtual void onWaitingTimeout() = 0;
 
     /**
      * @brief 设置麦克风音量
@@ -430,22 +414,22 @@ public:
      * @param videoDeviceIds 视频设备id列表
      * @return void
      */
-    virtual void getLocalDeviceList(std::vector<std::wstring>* recordDevicesNames, std::vector<std::wstring>* recordDevicesIds,
-                            std::vector<std::wstring>* playoutDevicesNames, std::vector<std::wstring>* playoutDevicesIds,
-                            std::vector<std::wstring>* videoDeviceNames, std::vector<std::wstring>* videoDeviceIds) = 0;
+    virtual void getLocalDeviceList(std::vector<std::string>* recordDevicesNames, std::vector<std::string>* recordDevicesIds,
+                            std::vector<std::string>* playoutDevicesNames, std::vector<std::string>* playoutDevicesIds,
+                            std::vector<std::string>* videoDeviceNames, std::vector<std::string>* videoDeviceIds) = 0;
 
     /**
      * @brief 设置当前视频设备
-     * @param id 视频设备id
+     * @param deviceId 视频设备id
      * @return void
      */
-    virtual void setVideoDevice(const std::wstring& id) = 0;
+    virtual void setVideoDevice(const std::string& deviceId) = 0;
 
     /**
      * @brief 获取当前视频设备id
-     * @return std::wstring
+     * @return std::string
      */
-    virtual std::wstring getVideoDevice() = 0;
+    virtual std::string getVideoDevice() = 0;
 
     /**
      * @brief 设置音频设备
@@ -453,17 +437,17 @@ public:
      * @param isRecord 是否为麦克风，true是麦克风，false是扬声器
      * @return void
      */
-    virtual void setAudioDevice(const std::wstring& id, bool isRecord) = 0;
+    virtual void setAudioDevice(const std::string& id, bool isRecord) = 0;
 
     /**
      * @brief 获取音频设备
      * @param isRecord 是否为麦克风，true是麦克风，false是扬声器
-     * @return std::wstring
+     * @return std::string
      */
-    virtual std::wstring getAudioDevice(bool isRecord) = 0;
+    virtual std::string getAudioDevice(bool isRecord) = 0;
 
     /**
-     * @brief 获取G2引擎
+     * @brief 获取NeRtc引擎
      * @return nertc::IRtcEngineEx*
      */
     virtual nertc::IRtcEngineEx* getRtcEngine() = 0;
@@ -472,23 +456,26 @@ public:
      * @brief 设置token服务
      * @attention 在线上环境中，token的获取需要放到您的应用服务端完成，然后由服务器通过安全通道把token传递给客户端，
      * Demo中使用的URL仅仅是demoserver，不要在您的应用中使用，详细请参考: http://dev.netease.im/docs?doc=server
-     * @param getTokenService token服务
+     * @param getTokenService token 服务
      * @return void
      */
     virtual void setTokenService(GetTokenServiceFunc getTokenService) = 0;
 };
 
-    /**
-     * @brief 创建组件实例
-     * @return IAvChatComponent* 组件对象
-     */
-    IAvChatComponent* createChatComponent();
+#define NECALLKIT_VER "1.3.1"   /**< 呼叫组件版本 */
 
-    /**
-     * @brief 销毁组件实例
-     * @return void
-     */
-    void destroyChatComponent();
+/**
+ * @brief 创建组件实例
+ * @return IAvChatComponent* 组件对象
+ */
+IAvChatComponent* createChatComponent();
+
+/**
+ * @brief 销毁组件实例
+ * @return void
+ */
+void destroyChatComponent();
+
 }  // namespace necall_kit
 
 #endif  // !NECALLKIT_INTERFACE_H_

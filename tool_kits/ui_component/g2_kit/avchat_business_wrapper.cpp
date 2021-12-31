@@ -358,10 +358,53 @@ namespace nim_comp
         std::vector<std::wstring>* videoDeviceNames,
         std::vector<std::wstring>* videoDeviceIds)
     {
+        std::vector<std::string> recordDevicesNamesTmp;
+        std::vector<std::string> recordDevicesIdsTmp;
+        std::vector<std::string> playoutDevicesNamesTmp;
+        std::vector<std::string> playoutDevicesIdsTmp;
+        std::vector<std::string> videoDeviceNamesTmp;
+        std::vector<std::string> videoDeviceIdsTmp;
+
 		createChatComponent()->getLocalDeviceList(
-            recordDevicesNames, recordDevicesIds,
-            playoutDevicesNames, playoutDevicesIds,
-            videoDeviceNames, videoDeviceIds);
+            recordDevicesNames ? &recordDevicesNamesTmp : nullptr, recordDevicesIds ? &recordDevicesIdsTmp : nullptr,
+            playoutDevicesNames ? &playoutDevicesNamesTmp : nullptr, playoutDevicesIds ? &playoutDevicesIdsTmp : nullptr,
+            videoDeviceNames ? &videoDeviceNamesTmp : nullptr, videoDeviceIds ? &videoDeviceIdsTmp : nullptr);
+
+        if (recordDevicesNames) {
+            for (auto& it : recordDevicesNamesTmp) {
+                recordDevicesNames->push_back(nbase::UTF8ToUTF16(it));
+            }
+        }
+
+        if (recordDevicesIds) {
+            for (auto& it : recordDevicesIdsTmp) {
+                recordDevicesIds->push_back(nbase::UTF8ToUTF16(it));
+            }
+        }
+
+        if (playoutDevicesNames) {
+            for (auto& it : playoutDevicesNamesTmp) {
+                playoutDevicesNames->push_back(nbase::UTF8ToUTF16(it));
+            }
+        }
+
+        if (playoutDevicesIds) {
+            for (auto& it : playoutDevicesIdsTmp) {
+                playoutDevicesIds->push_back(nbase::UTF8ToUTF16(it));
+            }
+        }
+
+        if (videoDeviceNames) {
+            for (auto& it : videoDeviceNamesTmp) {
+                videoDeviceNames->push_back(nbase::UTF8ToUTF16(it));
+            }
+        }
+
+        if (videoDeviceIds) {
+            for (auto& it : videoDeviceIdsTmp) {
+                videoDeviceIds->push_back(nbase::UTF8ToUTF16(it));
+            }
+        }
     }
     unsigned char AvChatBusinessWrapper::getAudioVolumn(bool isRecord)
     {
@@ -370,11 +413,11 @@ namespace nim_comp
     }
     std::wstring AvChatBusinessWrapper::getVideoDevice()
     {
-        return createChatComponent()->getVideoDevice();
+        return nbase::UTF8ToUTF16(createChatComponent()->getVideoDevice());
     }
     std::wstring AvChatBusinessWrapper::getAudioDevice(bool isRecord)
     {
-        return createChatComponent()->getAudioDevice(isRecord);
+        return nbase::UTF8ToUTF16(createChatComponent()->getAudioDevice(isRecord));
     }
 //     bool AvChatBusinessWrapper::isAudioEnable(bool isRecord)
 //     {
@@ -398,12 +441,12 @@ namespace nim_comp
     void AvChatBusinessWrapper::setVideoDevice(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-		createChatComponent()->setVideoDevice(params.deviceId);
+		createChatComponent()->setVideoDevice(nbase::UTF16ToUTF8(params.deviceId));
     }
     void AvChatBusinessWrapper::setAudioDevice(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-		createChatComponent()->setAudioDevice(params.deviceId, params.isRecordDevice);
+		createChatComponent()->setAudioDevice(nbase::UTF16ToUTF8(params.deviceId), params.isRecordDevice);
     }
     void AvChatBusinessWrapper::enableLocalVideo(const nbase::BatpPack& request)
     {

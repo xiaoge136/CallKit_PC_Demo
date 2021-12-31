@@ -15,9 +15,6 @@
     <ClInclude Include="third_party\util\util.h">
       <Filter>third_party\util</Filter>
     </ClInclude>
-    <ClInclude Include="include\necallkit_def.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="stable.h" />
     <ClInclude Include="include\necallkit_interface.h">
       <Filter>include</Filter>

@@ -245,7 +245,7 @@ public:
      * @brief 呼叫等待超时
      * @return void
      */
-    virtual void onWaitingTimeout() override;
+    //virtual void onWaitingTimeout() override;
 
     /**
      * @brief 设置麦克风音量
@@ -282,22 +282,22 @@ public:
      * @param videoDeviceIds 视频设备id列表
      * @return void
      */
-    virtual void getLocalDeviceList(std::vector<std::wstring>* recordDevicesNames, std::vector<std::wstring>* recordDevicesIds,
-                            std::vector<std::wstring>* playoutDevicesNames, std::vector<std::wstring>* playoutDevicesIds,
-                            std::vector<std::wstring>* videoDeviceNames, std::vector<std::wstring>* videoDeviceIds) override;
+    virtual void getLocalDeviceList(std::vector<std::string>* recordDevicesNames, std::vector<std::string>* recordDevicesIds,
+                            std::vector<std::string>* playoutDevicesNames, std::vector<std::string>* playoutDevicesIds,
+                            std::vector<std::string>* videoDeviceNames, std::vector<std::string>* videoDeviceIds) override;
 
     /**
      * @brief 设置当前视频设备
      * @param id 视频设备id
      * @return void
      */
-    virtual void setVideoDevice(const std::wstring& id) override;
+    virtual void setVideoDevice(const std::string& id) override;
 
     /**
      * @brief 获取当前视频设备id
-     * @return std::wstring
+     * @return std::string
      */
-    virtual std::wstring getVideoDevice() override;
+    virtual std::string getVideoDevice() override;
 
     /**
      * @brief 设置音频设备
@@ -305,14 +305,14 @@ public:
      * @param isRecord 是否为麦克风，true是麦克风，false是扬声器
      * @return void
      */
-    virtual void setAudioDevice(const std::wstring& id, bool isRecord) override;
+    virtual void setAudioDevice(const std::string& id, bool isRecord) override;
 
     /**
      * @brief 获取音频设备
      * @param isRecord 是否为麦克风，true是麦克风，false是扬声器
-     * @return std::wstring
+     * @return std::string
      */
-    virtual std::wstring getAudioDevice(bool isRecord) override;
+    virtual std::string getAudioDevice(bool isRecord) override;
 
     /**
      * @brief 获取G2引擎
