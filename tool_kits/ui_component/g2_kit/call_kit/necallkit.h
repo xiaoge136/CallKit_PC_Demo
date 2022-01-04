@@ -388,15 +388,15 @@ private:
     nim::SignalingInviteParam invitingInfo_;
     nim::SignalingCreateResParam createdChannelInfo_;
     necall_kit::Timer* calling_timeout_timer_ = nullptr;
-    ComponentStatus status_;
+    ComponentStatus status_ = idle;
     std::string joined_channel_id_;
-    int64_t to_account_id_;
+    int64_t to_account_id_ = 0;
     std::string from_account_id_;
     std::string stoken_;
     std::string version_;     /**< 对方版本 */
     std::string channelName_; /**< 房间频道名称 */
     std::string attachment_;  /**< 附件信息 */
-    int callType;
+    int callType = kAvChatAudio;
     bool isCameraOpen;
     bool timeOutHurryUp;
     bool isMasterInvited; /**< 主叫方标记 */

@@ -812,6 +812,7 @@ namespace nim_comp
 
 		dial_timeout_timer_.Cancel();
 		nbase::BatpPack bp;
+        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		AvChatParams params;
 		switch (why)
 		{
