@@ -363,6 +363,7 @@ protected:
     virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
     virtual void onUserVideoStop(nertc::uid_t uid) override;
     virtual void onDisconnect(nertc::NERtcErrorCode reason) override;
+    virtual void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) override;
 
     // G2 MediaStatsObserver回调
     //该回调描述每个用户在通话中的网络状态，每 2 秒触发一次，只上报状态有变更的成员。

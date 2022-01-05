@@ -1223,6 +1223,14 @@ void AvChatComponent::onDisconnect(nertc::NERtcErrorCode reason) {
     compEventHandler_.lock()->onDisconnect(reason);
 }
 
+void AvChatComponent::onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) {
+    std::list<nertc::NERtcAudioVolumeInfo> neRtcAudioVolumeInfo;
+    for (unsigned int i = 0; i < speaker_number; i++) {
+        neRtcAudioVolumeInfo.push_back(speakers[i]);
+    }
+    compEventHandler_.lock()->onRemoteAudioVolumeIndication(neRtcAudioVolumeInfo, total_volume);
+}
+
 void AvChatComponent::onNetworkQuality(const nertc::NERtcNetworkQualityInfo* infos, unsigned int user_count) {
     std::map<uint64_t, nertc::NERtcNetworkQualityType> network_quality;
     for (int i = 0; i < user_count; i++) {

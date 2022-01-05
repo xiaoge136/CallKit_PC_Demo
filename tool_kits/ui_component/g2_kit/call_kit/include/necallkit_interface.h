@@ -190,6 +190,18 @@ public:
      * @return void
      */
     virtual void onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname) {}
+
+    /**
+     * @brief 提示房间内谁正在说话及说话者瞬时音量的回调
+     * 该回调默认为关闭状态。可以通过 getRtcEngine() 的 enableAudioVolumeIndication 方法开启。开启后，无论房间内是否有人说话，SDK 都会按 enableAudioVolumeIndication 方法中设置的时间间隔触发该回调。
+     * 在返回的 speakers 数组中:
+     * - 如果有 uid 出现在上次返回的数组中，但不在本次返回的数组中，则默认该 uid 对应的远端用户没有说话。
+     * - 如果volume 为 0，表示该用户没有说话。
+     * - 如果speakers 数组为空，则表示此时远端没有人说话
+     @param listAudioVolumeInfo 每个说话者的用户 ID 和音量信息
+     @param totalVolume （混音后的）总音量，取值范围为 [0,100]。
+     */
+    virtual void onRemoteAudioVolumeIndication(const std::list<nertc::NERtcAudioVolumeInfo>& listAudioVolumeInfo, int totalVolume) {}
 };
 
 /**
