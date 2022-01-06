@@ -18,6 +18,7 @@ private:
 	std::thread *thread = nullptr;
 	std::mutex mutex;
 	std::atomic<bool> expired;
+	std::atomic<bool> stop_ = false;
 	std::condition_variable cond;
 
 public:
@@ -46,22 +47,35 @@ public:
 		expired = false;
 		thread = new std::thread([this, interval, loop, task]() mutable {
 			std::cout << "timer[" << name << "] thread start" << std::endl;
+
 			const std::chrono::milliseconds &ms = std::chrono::milliseconds(interval);
+			auto endTime = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::system_clock::now().time_since_epoch()) + ms;
 			while (loop--) {
 				std::unique_lock<std::mutex> lock(mutex);
-				std::cv_status status = cond.wait_for(lock, ms);
-				if (std::cv_status::timeout == status) {
-					task();
+				bool res = cond.wait_for(lock, ms, [this, endTime, ms] {
+					auto curTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+					if (curTime >= endTime || stop_) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				});
+
+				if (stop_) {
+					std::cout << "timer[" << name << "] wait break" << std::endl;
 					loop = 0;
 					break;
 				}
 				else {
-					std::cout << "timer[" << name << "] wait break" << std::endl;
+					task();
+					std::cout << "excute task" << std::endl;
 					loop = 0;
 					break;
 				}
 			}
 			expired = true;
+			stop_ = false;
 			std::cout << "timer[" << name << "] thread finish" << std::endl;
 		});
 	}
@@ -72,6 +86,7 @@ public:
 			return;
 		}
 		{
+			stop_ = true;
 			std::cout << "timer[" << name << "] stop notify" << std::endl;
 			std::unique_lock<std::mutex> lock{ mutex };
 			cond.notify_one();

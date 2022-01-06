@@ -17,7 +17,7 @@
 #include "nertc_video_device_manager.h"
 #include "nertc_audio_device_manager.h"
 
-// NeIM
+// NIM
 #include "nim_cpp_wrapper/nim_cpp_api.h"
 #include "nim_tools_cpp_wrapper/nim_tools_http_cpp.h"
 
@@ -30,6 +30,32 @@ enum AVCHAT_CALL_TYPE {
     kAvChatAudio = 1,  /**< 音频类型 */
     kAvChatVideo = 2,  /**< 视频类型 */
     kAvChatCustom = 3, /**< 自定义 */
+};
+
+/**
+ * @brief 错误码
+ */
+enum AVCHAT_ERROR_CODE {
+    kAvChatNoError = 0,                     /**< 无错误 */
+    kAvChatErrorCallWhenCalling = 20002,    /**< 已在呼叫中 */
+    kAvChatErrorCallWhenCalled = 20003,     /**< 正在被呼叫 */
+    kAvChatErrorCallWhenInCall = 20004,     /**< 已在通话中 */
+    kAvChatErrorHangupWhenIdle = 20005,     /**< 挂断时，不在通话中 */
+    kAvChatErrorLeaveWhenIdle = 20009,      /**< idle状态时调用leave，不在通话中 */
+    kAvChatErrorLeaveWhenCalling = 20010,   /**< Calling状态时调用leave，不在通话中 */
+    kAvChatErrorLeaveWhenCalled = 20011,    /**< Called状态时调用leave，不在通话中 */
+    kAvChatErrorCancelWhenIdle = 20013,     /**< idle状态时调用cancel，未发起通话 */
+    kAvChatErrorCancelWhenCalled = 20015,   /**< Called状态时调用cancel，未发起通话 */
+    kAvChatErrorCancelWhenInCall = 20016,   /**< Called状态时调用cancel，不能取消 */
+    kAvChatErrorAcceptWhenIdle = 20017,     /**< idle状态时调用Accept，不存在需要接通的呼叫 */
+    kAvChatErrorAcceptWhenCalling = 20018,  /**< Calling状态时调用Accept，不存在需要接通的呼叫 */
+    kAvChatErrorAcceptWhenInCall = 20020,   /**< InCall状态时调用Accept，不存在需要接通的呼叫 */
+    kAvChatErrorRejectWhenIdle = 20021,     /**< idle状态时调用Reject，不存在需要拒绝的呼叫 */
+    kAvChatErrorRejectWhenCalling = 20022,  /**< Calling状态时调用Reject，不存在需要拒绝的呼叫 */
+    kAvChatErrorRejectWhenInCall = 20024,   /**< InCall状态时调用Reject，不存在需要拒绝的呼叫 */
+    kAvChatErrorSwitchCallTypeWhenIdle = 20025,     /**< Idle状态时调用SwitchCallType，只能在呼叫中进行切换 */
+    kAvChatErrorSwitchCallTypeWhenCalling = 20026,  /**< Calling状态时调用SwitchCallTypet，只能在呼叫中进行切换 */
+    kAvChatErrorSwitchCallTypeWhenCalled = 20027,   /**< Called状态时调用SwitchCallType，只能在呼叫中进行切换 */
 };
 
 /**
@@ -249,12 +275,12 @@ public:
      */
     virtual void setupRemoteView(nertc::NERtcVideoCanvas* canvas, const std::string& userId) = 0;
 
-	/**
-	 * @brief 切换视频
-	 * @note PC暂没实现摄像头切换
-	 * @return void
-	 */
-	virtual void switchCamera() = 0;
+    /**
+     * @brief 切换视频
+     * @note PC暂没实现摄像头切换
+     * @return void
+     */
+    virtual void switchCamera() = 0;
 
     /**
      * @brief 打开本地视频
@@ -342,7 +368,7 @@ public:
      * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
      * @return void
      */
-    virtual void switchCallType(std::string userId, AVCHAT_CALL_TYPE type) = 0;
+    virtual void switchCallType(std::string userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb) = 0;
 
     /**
      * @brief 开始音频设备回路测试

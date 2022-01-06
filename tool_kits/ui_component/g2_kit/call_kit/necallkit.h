@@ -121,14 +121,14 @@ public:
 
     /**
      * @brief 打开本地音频
-     * @param mute 是否打开本地音频，true打开，false关闭
+     * @param mute 是否打开本地音频，false打开，true关闭
      * @return void
      */
     virtual void muteLocalAudio(bool mute) override;
 
     /**
      * @brief 静音本地音频
-     * @param enable 是否静音本地音频，true不静音，false静音
+     * @param enable 是否静音本地音频，false静音，true不静音
      * @return void
      */
     virtual void enableAudioPlayout(bool enable) override;
@@ -198,7 +198,7 @@ public:
      * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
      * @return void
      */
-    virtual void switchCallType(std::string user_id, AVCHAT_CALL_TYPE type) override;
+    virtual void switchCallType(std::string user_id, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb) override;
 
     /**
      * @brief 开始音频设备回路测试

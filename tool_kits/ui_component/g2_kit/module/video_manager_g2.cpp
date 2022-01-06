@@ -176,15 +176,6 @@ namespace nim_comp
 	bool VideoManagerG2::ShowVideoChatForm(const std::string& session_id, bool video, bool isSender/* = true*/)
 	{
 		SetDeviceOnce();
-
-		video_form_.release();
-		video_form_.reset(new VideoFormG2(session_id));
-		video_form_flag_ = video_form_->GetWeakFlag();
-		video_form_->setVideoMode(video);
-		video_form_->Create(NULL, L"", WS_OVERLAPPEDWINDOW, 0, false, ui::UiRect());
-		video_form_->CenterWindow();
-		video_form_->ShowWindow();
-
 		is_video_mode_ = video;
 		is_sender_ = isSender;
 
@@ -195,16 +186,38 @@ namespace nim_comp
 			AvChatParams params;
 			params.userId = session_id;// nim::Client::GetCurrentUserAccount();
 			params.callType = is_video_mode_ ? kAvChatVideo : kAvChatAudio;
+			params.optCb = [this, session_id, video](int errorCode) {
+				if (errorCode == 10201 || errorCode == 10202 || errorCode == 200) {
+					video_form_.release();
+					video_form_.reset(new VideoFormG2(session_id));
+					video_form_flag_ = video_form_->GetWeakFlag();
+					video_form_->setVideoMode(video);
+					video_form_->Create(NULL, L"", WS_OVERLAPPEDWINDOW, 0, false, ui::UiRect());
+					video_form_->CenterWindow();
+					video_form_->ShowWindow();
+					video_form_->ShowStatusPage(VideoFormG2::SP_DIAL);
+					video_form_->SwitchStatus(VideoFormG2::STATUS_CALLING);
+					//成功
+				}
+				else {
+					//失败
+					QLOG_APP(L"call failed: ", errorCode);
+				}
+			};
 			bp.head_.action_name_ = kAvChatCall;
 			bp.body_.param_ = params;
 			nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
-
-			video_form_->ShowStatusPage(VideoFormG2::SP_DIAL);
-			video_form_->SwitchStatus(VideoFormG2::STATUS_CALLING);
 			//video_form_->StartDialWaitingTimer();
 		}
 		else
 		{
+			video_form_.release();
+			video_form_.reset(new VideoFormG2(session_id));
+			video_form_flag_ = video_form_->GetWeakFlag();
+			video_form_->setVideoMode(video);
+			video_form_->Create(NULL, L"", WS_OVERLAPPEDWINDOW, 0, false, ui::UiRect());
+			video_form_->CenterWindow();
+			video_form_->ShowWindow();
 			video_form_->AdjustWindowSize(is_video_mode_);
 			video_form_->CheckTitle();
 			video_form_->ShowStatusPage(VideoFormG2::SP_CONFIRM);

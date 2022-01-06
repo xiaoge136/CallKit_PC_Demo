@@ -271,12 +271,23 @@ namespace nim_comp
         std::string userId = params.userId;
         AVCHAT_CALL_TYPE callType = AVCHAT_CALL_TYPE(params.callType);
 
-		createChatComponent()->call(userId, callType, params.optCb);
+		createChatComponent()->call(userId, callType, [params](int errorCode) {
+			//成功
+			if (errorCode == 10201 || errorCode == 10202 || errorCode == 200) {
+				nbase::BatpPack bp;
+				bp.head_.action_name_ = kAvChatOnCalling;
+				bp.body_.param_ = params;
+				nbase::BusinessManager::GetInstance()->Notify(bp);
+			}
+			else {
+				//失败
+				QLOG_APP(L"call failed: ", errorCode);
+			}
 
-        nbase::BatpPack bp;
-        bp.head_.action_name_ = kAvChatOnCalling;
-        bp.body_.param_ = params;
-        nbase::BusinessManager::GetInstance()->Notify(bp);
+			if (params.optCb) {
+				params.optCb(errorCode);
+			}
+		});
     }
 
     void AvChatBusinessWrapper::login(const nbase::BatpPack& request)
@@ -306,7 +317,7 @@ namespace nim_comp
     void AvChatBusinessWrapper::switchCallType(const nbase::BatpPack& request)
     {
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
-		createChatComponent()->switchCallType(params.sessionId, (AVCHAT_CALL_TYPE)params.callType);
+		createChatComponent()->switchCallType(params.sessionId, (AVCHAT_CALL_TYPE)params.callType, params.optCb);
     }
     void AvChatBusinessWrapper::setAudioMute(const nbase::BatpPack& request)
     {
