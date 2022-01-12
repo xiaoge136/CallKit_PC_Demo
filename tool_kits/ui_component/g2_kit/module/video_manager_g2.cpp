@@ -676,6 +676,7 @@ namespace nim_comp
 	}
 	void VideoManagerG2::OnErrorCb(const nbase::BatpPack& response)
 	{
+        return;
 		if (video_form_)
 			video_form_->EnterEndCallPage(VideoFormG2::END_CALL_CLOSE);
 	}

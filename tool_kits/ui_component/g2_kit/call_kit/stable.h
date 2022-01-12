@@ -15,6 +15,8 @@
 #include <atomic>
 #include <future>
 
+#include "third_party/util/singleton.h"
+
 /**< nertc日志目录 */
 #define AVCHAT_LOG_DIR L"Netease\\CallKit\\NeRtc"
 

@@ -1,5 +1,4 @@
 ﻿#include "necallkit.h"
-#include "stable.h"
 #include "third_party/util/util.h"
 #include "third_party/timer/Timer.h"
 
@@ -82,6 +81,7 @@ void AvChatComponent::release() {
         destroyNERtcEngine((void*&)rtcEngine_);
         rtcEngine_ = nullptr;
     }
+    regSignalingCb(false);
 }
 
 void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode) {
@@ -108,9 +108,14 @@ void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode) {
     if (0 != ret) {
         YXLOG(Info) << "setAudioProfile failed, ret: " << ret << YXLOGEnd;
     }
-    nim::Signaling::RegOnlineNotifyCb(std::bind(&AvChatComponent::signalingNotifyCb, this, std::placeholders::_1));
-    nim::Signaling::RegMutilClientSyncNotifyCb(std::bind(&AvChatComponent::signalingMutilClientSyncCb, this, std::placeholders::_1));
-    nim::Signaling::RegOfflineNotifyCb(std::bind(&AvChatComponent::signalingOfflineNotifyCb, this, std::placeholders::_1));
+
+    regSignalingCb();
+}
+
+void AvChatComponent::regEventHandler(std::shared_ptr<IAvChatComponentEventHandler> compEventHandler) {
+    YXLOG_API(Info) << "regEventHandler" << YXLOGEnd;
+    compEventHandler_.reset();
+    compEventHandler_ = compEventHandler;
 }
 
 int AvChatComponent::setRecordDeviceVolume(int value) {
@@ -339,6 +344,8 @@ void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, con
     createdChannelInfo_ = nim::SignalingCreateResParam();
     isMasterInvited = true;  //主叫方标记true
 
+    regSignalingCb();
+
     // 1,创建channel
     auto createCb = std::bind(&AvChatComponent::signalingCreateCb, this, std::placeholders::_1, std::placeholders::_2, cb);
     nim::Signaling::SignalingCreate(createParam, createCb);
@@ -374,7 +381,6 @@ void AvChatComponent::startDialWaitingTimer() {
 // 被叫方发送ACCEPT，并携带自己版本号(version)
 void AvChatComponent::accept(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "accept, status_: " << status_ << YXLOGEnd;
-
     AVCHAT_ERROR_CODE code = kAvChatNoError;
     if (status_ == idle) {
         code = kAvChatErrorAcceptWhenIdle;
@@ -413,6 +419,7 @@ void AvChatComponent::accept(AvChatComponentOptCb cb) {
     nim_cpp_wrapper_util::Json::FastWriter fw;
     param.accept_custom_info_ = fw.write(values);
 
+    regSignalingCb();
     // int ret = rtcEngine_->joinChannel("", param.channel_id_.c_str(), 0);
     auto acceptCb = std::bind(&AvChatComponent::signalingAcceptCb, this, std::placeholders::_1, std::placeholders::_2, cb);
     YXLOG(Info) << "accept, version: " << NECALLKIT_VER << YXLOGEnd;
@@ -421,7 +428,6 @@ void AvChatComponent::accept(AvChatComponentOptCb cb) {
 
 void AvChatComponent::reject(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "reject, status_: " << status_ << YXLOGEnd;
-
     AVCHAT_ERROR_CODE code = kAvChatNoError;
     if (status_ == idle) {
         code = kAvChatErrorRejectWhenIdle;
@@ -450,6 +456,7 @@ void AvChatComponent::reject(AvChatComponentOptCb cb) {
     param.request_id_ = invitedInfo_.request_id_;
     param.offline_enabled_ = true;
 
+    regSignalingCb();
     auto rejectCb = std::bind(&AvChatComponent::signalingRejectCb, this, std::placeholders::_1, std::placeholders::_2, cb);
     nim::Signaling::Reject(param, rejectCb);
 
@@ -459,7 +466,6 @@ void AvChatComponent::reject(AvChatComponentOptCb cb) {
 
 void AvChatComponent::hangup(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "hangup, status_: " << status_ << YXLOGEnd;
-
     if (status_ == idle) {
         if (cb) {
             cb(kAvChatErrorHangupWhenIdle);
@@ -646,12 +652,6 @@ void AvChatComponent::enableAudioPlayout(bool enable) {
         return;
     }
     rtcEngine_->muteLocalAudioStream(!enable);
-}
-
-void AvChatComponent::regEventHandler(std::shared_ptr<IAvChatComponentEventHandler> compEventHandler) {
-    YXLOG_API(Info) << "regEventHandler" << YXLOGEnd;
-    compEventHandler_.reset();
-    compEventHandler_ = compEventHandler;
 }
 
 void AvChatComponent::startVideoPreview(bool start /* = true*/) {
@@ -1297,6 +1297,25 @@ void AvChatComponent::signalingOfflineNotifyCb(std::list<std::shared_ptr<nim::Si
         }
     }
 }
+
+void AvChatComponent::regSignalingCb(bool reg) {
+    if ((reg && m_bRegSignalingCb) || (!reg && !m_bRegSignalingCb)) {
+        return;
+    }
+
+    YXLOG(Info) << "regSignalingCb, reg: " << reg << YXLOGEnd;
+    m_bRegSignalingCb = reg;
+    if (m_bRegSignalingCb) {
+        nim::Signaling::RegOnlineNotifyCb(std::bind(&AvChatComponent::signalingNotifyCb, this, std::placeholders::_1));
+        nim::Signaling::RegMutilClientSyncNotifyCb(std::bind(&AvChatComponent::signalingMutilClientSyncCb, this, std::placeholders::_1));
+        nim::Signaling::RegOfflineNotifyCb(std::bind(&AvChatComponent::signalingOfflineNotifyCb, this, std::placeholders::_1));
+    } else {
+        nim::Signaling::RegOnlineNotifyCb(nullptr);
+        nim::Signaling::RegMutilClientSyncNotifyCb(nullptr);
+        nim::Signaling::RegOfflineNotifyCb(nullptr);
+    }
+}
+
 ///////////////////////////////G2事件///////////////////////////////
 void AvChatComponent::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) {
     std::string strAccid = getAccid(uid);
@@ -1358,6 +1377,7 @@ void AvChatComponent::onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolum
 }
 
 void AvChatComponent::onError(int error_code, const char* msg) {
+    YXLOG(Error) << "onError, error_code: " << error_code << ", msg: " << msg << YXLOGEnd;
     compEventHandler_.lock()->onError(error_code, std::string(msg));
 }
 
@@ -1387,7 +1407,7 @@ bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std:
     nim_cpp_wrapper_util::Json::Value values;
     nim_cpp_wrapper_util::Json::Reader reader;
     if (!reader.parse(str, values) || !values.isObject()) {
-        YXLOG(Error) << "parse custom info failed: " << str << YXLOGEnd;
+        YXLOG(Error) << "parse custom info failed, str: " << str << YXLOGEnd;
         return false;
     }
 

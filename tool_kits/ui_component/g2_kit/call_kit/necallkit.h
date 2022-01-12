@@ -10,7 +10,7 @@
 #define AVCHAT_COMPONENT_H_
 
 #include "include/necallkit_interface.h"
-#include "third_party/util/singleton.h"
+#include "stable.h"
 
 namespace necall_kit {
 
@@ -376,6 +376,7 @@ private:
     void closeChannelInternal(const std::string& channelId, AvChatComponentOptCb cb);
     void updateChannelMembers(const nim::SignalingJoinResParam* res);
     void handleNetCallMsg(necall_kit::NIMNetCallStatus why);
+    void regSignalingCb(bool reg = true);
 
     GetTokenServiceFunc getTokenService_;
     std::string getAccid(int64_t uid);
@@ -404,6 +405,7 @@ private:
     bool timeOutHurryUp;
     bool isMasterInvited; /**< 主叫方标记 */
     bool isUseRtcSafeMode;
+    std::atomic_bool m_bRegSignalingCb{ false };
 };
 }  // namespace necall_kit
 
