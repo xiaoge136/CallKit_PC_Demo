@@ -127,7 +127,7 @@ namespace nim_comp
         virtual void onDisconnect(int reason) override;
         virtual void OnVideoToAudio() override;
         virtual void onCallEnd() override;
-        virtual void onError(int errCode) override;
+        virtual void onError(int errCode, const std::string& errMsg) override;
 
         virtual void onOtherClientAccept() override;
         virtual void onOtherClientReject() override;
@@ -137,7 +137,7 @@ namespace nim_comp
         virtual void onAudioAvailable(const std::string& userId, bool available) override;
         virtual void onLocalCameraStateChanged(bool available) override;
         virtual void onAudioVolumeChanged(unsigned char value, bool isRecord) override;
-        virtual void onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname) override;
+        virtual void onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname, int errCode) override;
     };
 
     /**

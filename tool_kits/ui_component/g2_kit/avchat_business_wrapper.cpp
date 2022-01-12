@@ -147,7 +147,7 @@ namespace nim_comp
 
         nbase::BusinessManager::GetInstance()->Notify(bp);
     }
-    void AvChatComponentEventHandler::onError(int errCode)
+    void AvChatComponentEventHandler::onError(int errCode, const std::string& errMsg)
     {
         QLOG_APP(L"AvChatComponentEventHandler onError: {0}")<<errCode;
 
@@ -232,7 +232,7 @@ namespace nim_comp
 
         nbase::BusinessManager::GetInstance()->Notify(bp);
     }
-    void AvChatComponentEventHandler::onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname)
+    void AvChatComponentEventHandler::onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname, int errCode)
     {
         nbase::BatpPack bp;
         bp.head_.action_name_ = kAvChatOnJoinChannel;
