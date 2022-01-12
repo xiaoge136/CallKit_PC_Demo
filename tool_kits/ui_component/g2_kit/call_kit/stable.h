@@ -1,7 +1,7 @@
 ﻿/**
  * @file "stable.h"
  * @brief 呼叫组件的一些定义
- * @copyright (c) 2014-2021, NetEase Inc. All rights reserved
+ * @copyright (c) 2014-2022, NetEase Inc. All rights reserved
  * @date 2020/11/03
  */
 

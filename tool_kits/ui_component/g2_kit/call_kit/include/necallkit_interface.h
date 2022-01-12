@@ -1,7 +1,7 @@
 ﻿/**
  * @file necallkit_interface.h
  * @brief 呼叫组件头文件
- * @copyright (c) 2014-2021, NetEase Inc. All rights reserved
+ * @copyright (c) 2014-2022, NetEase Inc. All rights reserved
  * @date 2021/12/30
  */
 
@@ -151,11 +151,12 @@ public:
     virtual void onCallEnd() {}
 
     /**
-     * @brief 收到G2错误
-     * @param errCode G2错误码 {@see nertc::NERtcErrorCode}
+     * @brief 收到NeRtc错误
+     * @param errCode 错误码 {@see nertc::NERtcErrorCode}
+     * @param errMsg  错误信息
      * @return void
      */
-    virtual void onError(int errCode) {}
+    virtual void onError(int errCode, const std::string& errMsg) {}
 
     /**
      * @brief 收到其他端接受
@@ -213,9 +214,10 @@ public:
      * @param uid 音视频里的用户id
      * @param cid 音视频通道id
      * @param cname 音视频通道名称
+     * @param errCode 错误码 {@see nertc::NERtcErrorCode}
      * @return void
      */
-    virtual void onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname) {}
+    virtual void onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname, int errCode) {}
 
     /**
      * @brief 提示房间内谁正在说话及说话者瞬时音量的回调
@@ -291,14 +293,14 @@ public:
 
     /**
      * @brief 打开本地音频
-     * @param mute 是否打开本地音频，true打开，false关闭
+     * @param mute 是否打开本地音频，false打开，true关闭
      * @return void
      */
     virtual void muteLocalAudio(bool mute) = 0;
 
     /**
      * @brief 静音本地音频
-     * @param enable 是否静音本地音频，true不静音，false静音
+     * @param enable 是否静音本地音频，false静音，true不静音
      * @return void
      */
     virtual void enableAudioPlayout(bool enable) = 0;
@@ -307,10 +309,11 @@ public:
      * @brief 呼叫
      * @param userId 对方用户id
      * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
+     * @param attachment 附加信息
      * @param cb 结果回调
      * @return void
      */
-    virtual void call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb) = 0;
+    virtual void call(const std::string& userId, AVCHAT_CALL_TYPE type, const std::string& attachment, AvChatComponentOptCb cb) = 0;
 
     /**
      * @brief 接受

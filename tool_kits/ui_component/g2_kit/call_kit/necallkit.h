@@ -1,7 +1,7 @@
 ﻿/**
- * @file avchat_component.h
+ * @file necallkit.h
  * @brief 呼叫组件头文件
- * @copyright (c) 2014-2021, NetEase Inc. All rights reserved
+ * @copyright (c) 2014-2022, NetEase Inc. All rights reserved
  * @author Martin
  * @date 2021/05/28
  */
@@ -137,10 +137,11 @@ public:
      * @brief 呼叫
      * @param userId 对方用户id
      * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
+     * @param attachment 附加信息
      * @param cb 结果回调
      * @return void
      */
-    virtual void call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb) override;
+    virtual void call(const std::string& userId, AVCHAT_CALL_TYPE type, const std::string& attachment, AvChatComponentOptCb cb) override;
 
     /**
      * @brief 接受
@@ -364,6 +365,7 @@ protected:
     virtual void onUserVideoStop(nertc::uid_t uid) override;
     virtual void onDisconnect(nertc::NERtcErrorCode reason) override;
     virtual void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) override;
+    virtual void onError(int error_code, const char* msg) override;
 
     // G2 MediaStatsObserver回调
     //该回调描述每个用户在通话中的网络状态，每 2 秒触发一次，只上报状态有变更的成员。

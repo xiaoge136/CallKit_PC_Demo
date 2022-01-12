@@ -248,12 +248,12 @@ std::string AvChatComponent::getAudioDevice(bool isRecord) {
 
 nertc::IRtcEngineEx*  AvChatComponent::getRtcEngine() {
     YXLOG_API(Info) << "getRtcEngine" << YXLOGEnd;
-	return rtcEngine_ /*rtcEngine_.get()*/;
+    return rtcEngine_ /*rtcEngine_.get()*/;
 }
 
 void AvChatComponent::setTokenService(GetTokenServiceFunc getTokenService) {
     YXLOG_API(Info) << "setTokenService" << YXLOGEnd;
-	getTokenService_ = getTokenService;
+    getTokenService_ = getTokenService;
 }
 
 std::string AvChatComponent::getVideoDevice() {
@@ -301,38 +301,33 @@ void AvChatComponent::logout(AvChatComponentOptCb cb) {
 
 // 呼叫方首先发送INVITE，扩展字段携带自身版本号(version)及动态channelName，即<channelId> | 0 | <uid>，并直接预加载token。
 // 0代表1v1，uid为信令房间返回的用户uid；1代表group呼叫，uid传群组teamId
-void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb) {
-    YXLOG_API(Info) << "call, userId: " << userId << ", type: " << type << ", status_: " << status_ << YXLOGEnd;
+void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, const std::string& attachment, AvChatComponentOptCb cb) {
+    YXLOG_API(Info) << "call, userId: " << userId << ", type: " << type << ", attachment: " << attachment << ", status_: " << status_ << YXLOGEnd;
     if (!rtcEngine_) {
         return;
     }
 
-	AVCHAT_ERROR_CODE code = kAvChatNoError;
-	if (status_ == inCall) {
-		code = kAvChatErrorCallWhenInCall;
-	} else if (status_ == calling) {
-		code = kAvChatErrorCallWhenCalling;
-	} else if (status_ == called) {
-		code = kAvChatErrorCallWhenCalled;
-	}
+    AVCHAT_ERROR_CODE code = kAvChatNoError;
+    if (status_ == inCall) {
+        code = kAvChatErrorCallWhenInCall;
+    } else if (status_ == calling) {
+        code = kAvChatErrorCallWhenCalling;
+    } else if (status_ == called) {
+        code = kAvChatErrorCallWhenCalled;
+    }
 
-	if (kAvChatNoError != code) {
-		if (cb) {
-			cb(code);
-		}
-		return;
-	}
+    if (kAvChatNoError != code) {
+        if (cb) {
+            cb(code);
+        }
+        return;
+    }
 
     sendStatics("call", appKey_);
     channelMembers_.clear();
     version_.clear();
     channelName_.clear();
-
-    nim_cpp_wrapper_util::Json::Value values;
-    nim_cpp_wrapper_util::Json::FastWriter writer;
-    values["key"] = "call";
-    values["value"] = "testvalue";
-    attachment_ = writer.write(values);
+    attachment_ = attachment;
 
     nim::SignalingCreateParam createParam;
     createParam.channel_type_ = (nim::NIMSignalingType)type;
@@ -363,9 +358,8 @@ void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, AvC
 //}
 
 void AvChatComponent::startDialWaitingTimer() {
-    YXLOG_API(Info) << "startDialWaitingTimer" << YXLOGEnd;
+    YXLOG(Info) << "startDialWaitingTimer" << YXLOGEnd;
     calling_timeout_timer_->stop();
-    YXLOG(Info) << "startTimer." << YXLOGEnd;
     calling_timeout_timer_->startTimer(iCallingTimeoutSeconds, 1, [this]() {
         YXLOG(Info) << "startTimer call task, status_: " << status_ << YXLOGEnd;
         if (status_ == calling) {
@@ -381,23 +375,23 @@ void AvChatComponent::startDialWaitingTimer() {
 void AvChatComponent::accept(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "accept, status_: " << status_ << YXLOGEnd;
 
-	AVCHAT_ERROR_CODE code = kAvChatNoError;
-	if (status_ == idle) {
-		code = kAvChatErrorAcceptWhenIdle;
-	}
-	else if (status_ == calling) {
-		code = kAvChatErrorAcceptWhenCalling;
-	}
-	else if (status_ == inCall) {
-		code = kAvChatErrorAcceptWhenInCall;
-	}
+    AVCHAT_ERROR_CODE code = kAvChatNoError;
+    if (status_ == idle) {
+        code = kAvChatErrorAcceptWhenIdle;
+    }
+    else if (status_ == calling) {
+        code = kAvChatErrorAcceptWhenCalling;
+    }
+    else if (status_ == inCall) {
+        code = kAvChatErrorAcceptWhenInCall;
+    }
 
-	if (kAvChatNoError != code) {
-		if (cb) {
-			cb(code);
-		}
-		return;
-	}
+    if (kAvChatNoError != code) {
+        if (cb) {
+            cb(code);
+        }
+        return;
+    }
 
     calling_timeout_timer_->stop();
     sendStatics("accept", appKey_);
@@ -428,23 +422,23 @@ void AvChatComponent::accept(AvChatComponentOptCb cb) {
 void AvChatComponent::reject(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "reject, status_: " << status_ << YXLOGEnd;
 
-	AVCHAT_ERROR_CODE code = kAvChatNoError;
-	if (status_ == idle) {
-		code = kAvChatErrorRejectWhenIdle;
-	}
-	else if (status_ == calling) {
-		code = kAvChatErrorRejectWhenCalling;
-	}
-	else if (status_ == inCall) {
-		code = kAvChatErrorRejectWhenInCall;
-	}
+    AVCHAT_ERROR_CODE code = kAvChatNoError;
+    if (status_ == idle) {
+        code = kAvChatErrorRejectWhenIdle;
+    }
+    else if (status_ == calling) {
+        code = kAvChatErrorRejectWhenCalling;
+    }
+    else if (status_ == inCall) {
+        code = kAvChatErrorRejectWhenInCall;
+    }
 
-	if (kAvChatNoError != code) {
-		if (cb) {
-			cb(code);
-		}
-		return;
-	}
+    if (kAvChatNoError != code) {
+        if (cb) {
+            cb(code);
+        }
+        return;
+    }
 
     calling_timeout_timer_->stop();
     if (!isMasterInvited)
@@ -466,12 +460,12 @@ void AvChatComponent::reject(AvChatComponentOptCb cb) {
 void AvChatComponent::hangup(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "hangup, status_: " << status_ << YXLOGEnd;
 
-	if (status_ == idle) {
-		if (cb) {
-			cb(kAvChatErrorHangupWhenIdle);
-			return;
-		}
-	}
+    if (status_ == idle) {
+        if (cb) {
+            cb(kAvChatErrorHangupWhenIdle);
+            return;
+        }
+    }
 
     if (rtcEngine_) {
         rtcEngine_->leaveChannel();
@@ -516,23 +510,23 @@ void AvChatComponent::hangup(AvChatComponentOptCb cb) {
 void AvChatComponent::cancel(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "cancel, status_: " << status_ << YXLOGEnd;
 
-	AVCHAT_ERROR_CODE code = kAvChatNoError;
-	if (status_ == idle) {
-		code = kAvChatErrorCancelWhenIdle;
-	}
-	else if (status_ == called) {
-		code = kAvChatErrorCancelWhenCalled;
-	}
-	else if (status_ == inCall) {
-		code = kAvChatErrorCancelWhenInCall;
-	}
+    AVCHAT_ERROR_CODE code = kAvChatNoError;
+    if (status_ == idle) {
+        code = kAvChatErrorCancelWhenIdle;
+    }
+    else if (status_ == called) {
+        code = kAvChatErrorCancelWhenCalled;
+    }
+    else if (status_ == inCall) {
+        code = kAvChatErrorCancelWhenInCall;
+    }
 
-	if (kAvChatNoError != code) {
-		if (cb) {
-			cb(code);
-		}
-		return;
-	}
+    if (kAvChatNoError != code) {
+        if (cb) {
+            cb(code);
+        }
+        return;
+    }
 
     sendStatics("cancel", appKey_);
     if (isMasterInvited && status_ == calling) {
@@ -559,23 +553,23 @@ void AvChatComponent::cancel(AvChatComponentOptCb cb) {
 void AvChatComponent::leave(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "leave, status_: " << status_ << YXLOGEnd;
 
-	AVCHAT_ERROR_CODE code = kAvChatNoError;
-	if (status_ == idle) {
-		code = kAvChatErrorLeaveWhenIdle;
-	}
-	else if (status_ == calling) {
-		code = kAvChatErrorLeaveWhenCalling;
-	}
-	else if (status_ == called) {
-		code = kAvChatErrorLeaveWhenCalled;
-	}
+    AVCHAT_ERROR_CODE code = kAvChatNoError;
+    if (status_ == idle) {
+        code = kAvChatErrorLeaveWhenIdle;
+    }
+    else if (status_ == calling) {
+        code = kAvChatErrorLeaveWhenCalling;
+    }
+    else if (status_ == called) {
+        code = kAvChatErrorLeaveWhenCalled;
+    }
 
-	if (kAvChatNoError != code) {
-		if (cb) {
-			cb(code);
-		}
-		return;
-	}
+    if (kAvChatNoError != code) {
+        if (cb) {
+            cb(code);
+        }
+        return;
+    }
 
     if (rtcEngine_) {
         rtcEngine_->leaveChannel();
@@ -674,23 +668,23 @@ void AvChatComponent::startVideoPreview(bool start /* = true*/) {
 void AvChatComponent::switchCallType(std::string userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "switchCallType, userId: " << userId << ", type: " << type << ", status_:" <<status_ << YXLOGEnd;
 
-	AVCHAT_ERROR_CODE code = kAvChatNoError;
-	if (status_ == idle) {
-		code = kAvChatErrorSwitchCallTypeWhenIdle;
-	}
-	else if (status_ == calling) {
-		code = kAvChatErrorSwitchCallTypeWhenCalling;
-	}
-	else if (status_ == called) {
-		code = kAvChatErrorSwitchCallTypeWhenCalled;
-	}
+    AVCHAT_ERROR_CODE code = kAvChatNoError;
+    if (status_ == idle) {
+        code = kAvChatErrorSwitchCallTypeWhenIdle;
+    }
+    else if (status_ == calling) {
+        code = kAvChatErrorSwitchCallTypeWhenCalling;
+    }
+    else if (status_ == called) {
+        code = kAvChatErrorSwitchCallTypeWhenCalled;
+    }
 
-	if (kAvChatNoError != code) {
-		if (cb) {
-			cb(code);
-		}
-		return;
-	}
+    if (kAvChatNoError != code) {
+        if (cb) {
+            cb(code);
+        }
+        return;
+    }
 
     if (rtcEngine_ != nullptr) {
         int64_t uid = channelMembers_[userId];
@@ -731,6 +725,9 @@ void AvChatComponent::startAudioDeviceLoopbackTest(int interval) {
 
 void AvChatComponent::stopAudioDeviceLoopbackTest() {
     YXLOG_API(Info) << "stopAudioDeviceLoopbackTest" << YXLOGEnd;
+    if (!rtcEngine_) {
+        return;
+    }
     nertc::IAudioDeviceManager* audio_device_manager = nullptr;
     rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
     if (audio_device_manager) {
@@ -744,9 +741,13 @@ void AvChatComponent::requestTokenValue(int64_t uid) {
     if (isUseRtcSafeMode) {
         // int64_t uid;
         // uid = channelMembers_[senderAccid];
-        getTokenService_(uid, [=](const std::string token) { stoken_ = token; });
-    }
-    else {
+        if (getTokenService_) {
+            getTokenService_(uid, [=](const std::string token) { stoken_ = token; });
+        } else {
+            YXLOG(Error) << "getTokenService_ is null" << YXLOGEnd;
+            stoken_.clear();
+        }
+    } else {
         stoken_.clear();
     }
 }
@@ -798,6 +799,7 @@ void AvChatComponent::signalingInviteCb(int errCode, std::shared_ptr<nim::Signal
     if (cb)
         cb(errCode);
 }
+
 void AvChatComponent::signalingAcceptCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb) {
     YXLOG(Info) << "signalingAcceptCb, errCode: " << errCode << YXLOGEnd;
     nim::SignalingAcceptResParam* res = (nim::SignalingAcceptResParam*)res_param.get();
@@ -873,7 +875,7 @@ void AvChatComponent::signalingLeaveCb(int errCode, std::shared_ptr<nim::Signali
 }
 
 void AvChatComponent::updateChannelMembers(const nim::SignalingJoinResParam* res) {
-    YXLOG_API(Info) << "updateChannelMembers" << YXLOGEnd;
+    YXLOG(Info) << "updateChannelMembers" << YXLOGEnd;
     for (auto memInfo : res->info_.members_) {
         channelMembers_[memInfo.account_id_] = memInfo.uid_;
     }
@@ -885,9 +887,10 @@ std::string AvChatComponent::getAccid(int64_t uid) {
         if (it.second == uid)
             return it.first;
     }
-    YXLOG(Info) << "Get accid failed, uid: " << uid << YXLOGEnd;
-    return "";
+    YXLOG(Info) << "getAccid failed" << YXLOGEnd;
+    return std::to_string(uid);
 }
+
 void AvChatComponent::signalingJoinCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb,
                                       const std::string& channelId) {
     YXLOG(Info) << "signalingJoinCb, errCode: " << errCode << YXLOGEnd;
@@ -1020,7 +1023,7 @@ void AvChatComponent::handleInvited(std::shared_ptr<nim::SignalingNotifyInfo> no
         return;
     }
     YXLOG(Info) << "handleInvited, from_account_id: " << notifyInfo->from_account_id_ << ", version: " << version_
-                << ", channelName: " << channelName_ << ", attachment: " << attachment_ << YXLOGEnd;
+                << ", channelName: " << channelName_ << ", attachment: " << attachment_ << ", status_: " << status_ << YXLOGEnd;
     nim::SignalingNotifyInfoInvite* inviteInfo = (nim::SignalingNotifyInfoInvite*)notifyInfo.get();
 
     //忙线处理
@@ -1049,7 +1052,7 @@ void AvChatComponent::handleInvited(std::shared_ptr<nim::SignalingNotifyInfo> no
 
     // 接听计时
     calling_timeout_timer_->stop();
-    YXLOG(Info) << "startTimer." << YXLOGEnd;
+    YXLOG(Info) << "startTimer" << YXLOGEnd;
     calling_timeout_timer_->startTimer(iCallingTimeoutSeconds, 1, [this]() {
         YXLOG(Info) << "startTimer call task." << YXLOGEnd;
         timeOutHurryUp = true;
@@ -1299,7 +1302,7 @@ void AvChatComponent::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, n
     std::string strAccid = getAccid(uid);
     YXLOG(Info) << "onJoinChannel accid:" << strAccid << ", uid: " << uid << ", cid: " << cid << ", cname: " << channelName_ << YXLOGEnd;
     // rtcEngine_->enableLocalAudio(true);
-    compEventHandler_.lock()->onJoinChannel(strAccid, uid, cid, channelName_);
+    compEventHandler_.lock()->onJoinChannel(strAccid, uid, cid, channelName_, result);
 }
 
 void AvChatComponent::onUserJoined(nertc::uid_t uid, const char* user_name) {
@@ -1352,6 +1355,10 @@ void AvChatComponent::onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolum
         neRtcAudioVolumeInfo.push_back(speakers[i]);
     }
     compEventHandler_.lock()->onRemoteAudioVolumeIndication(neRtcAudioVolumeInfo, total_volume);
+}
+
+void AvChatComponent::onError(int error_code, const char* msg) {
+    compEventHandler_.lock()->onError(error_code, std::string(msg));
 }
 
 void AvChatComponent::onNetworkQuality(const nertc::NERtcNetworkQualityInfo* infos, unsigned int user_count) {
@@ -1431,6 +1438,7 @@ int versionCompare(const std::string& version1, const std::string& version2) {
 }
 
 void sendStatics(const std::string& id, const std::string& appkey) {
+    YXLOG(Info) << "sendStatics, id: " << id << YXLOGEnd;
     /*time_t curTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::async(std::launch::async, [id, appkey, curTime]() {
         nim_cpp_wrapper_util::Json::Value values;

@@ -271,7 +271,11 @@ namespace nim_comp
         std::string userId = params.userId;
         AVCHAT_CALL_TYPE callType = AVCHAT_CALL_TYPE(params.callType);
 
-		createChatComponent()->call(userId, callType, [params](int errorCode) {
+        nim_cpp_wrapper_util::Json::Value values;
+        nim_cpp_wrapper_util::Json::FastWriter writer;
+        values["key"] = "call";
+        values["value"] = "testvalue";
+		createChatComponent()->call(userId, callType, writer.write(values), [params](int errorCode) {
 			//成功
 			if (errorCode == 10201 || errorCode == 10202 || errorCode == 200) {
 				nbase::BatpPack bp;
