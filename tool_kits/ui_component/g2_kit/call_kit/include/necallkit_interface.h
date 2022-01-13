@@ -36,17 +36,17 @@ enum AVCHAT_CALL_TYPE {
  * @brief 错误码
  */
 enum AVCHAT_ERROR_CODE {
-    kAvChatNoError = 0,                     /**< 无错误 */
+    kAvChatNoError = 200,                   /**< 无错误 */
     kAvChatErrorCallWhenCalling = 20002,    /**< 已在呼叫中 */
     kAvChatErrorCallWhenCalled = 20003,     /**< 正在被呼叫 */
     kAvChatErrorCallWhenInCall = 20004,     /**< 已在通话中 */
     kAvChatErrorHangupWhenIdle = 20005,     /**< 挂断时，不在通话中 */
-    kAvChatErrorLeaveWhenIdle = 20009,      /**< idle状态时调用leave，不在通话中 */
-    kAvChatErrorLeaveWhenCalling = 20010,   /**< Calling状态时调用leave，不在通话中 */
-    kAvChatErrorLeaveWhenCalled = 20011,    /**< Called状态时调用leave，不在通话中 */
-    kAvChatErrorCancelWhenIdle = 20013,     /**< idle状态时调用cancel，未发起通话 */
-    kAvChatErrorCancelWhenCalled = 20015,   /**< Called状态时调用cancel，未发起通话 */
-    kAvChatErrorCancelWhenInCall = 20016,   /**< Called状态时调用cancel，不能取消 */
+    kAvChatErrorLeaveWhenIdle = 20009,      /**< idle 状态时调用leave，不在通话中 */
+    kAvChatErrorLeaveWhenCalling = 20010,   /**< Calling 状态时调用leave，不在通话中 */
+    kAvChatErrorLeaveWhenCalled = 20011,    /**< Called 状态时调用leave，不在通话中 */
+    kAvChatErrorCancelWhenIdle = 20013,     /**< idle 状态时调用cancel，未发起通话 */
+    kAvChatErrorCancelWhenCalled = 20015,   /**< Called 状态时调用cancel，未发起通话 */
+    kAvChatErrorCancelWhenInCall = 20016,   /**< Called 状态时调用cancel，不能取消 */
     kAvChatErrorAcceptWhenIdle = 20017,     /**< idle状态时调用Accept，不存在需要接通的呼叫 */
     kAvChatErrorAcceptWhenCalling = 20018,  /**< Calling状态时调用Accept，不存在需要接通的呼叫 */
     kAvChatErrorAcceptWhenInCall = 20020,   /**< InCall状态时调用Accept，不存在需要接通的呼叫 */
