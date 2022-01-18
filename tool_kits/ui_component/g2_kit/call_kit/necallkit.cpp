@@ -1368,6 +1368,11 @@ void AvChatComponent::onDisconnect(nertc::NERtcErrorCode reason) {
     compEventHandler_.lock()->onDisconnect(reason);
 }
 
+void AvChatComponent::onLocalAudioVolumeIndication(int volume) {
+    //YXLOG(Info) << "onLocalAudioVolumeIndication, volume: " << volume << YXLOGEnd;
+    compEventHandler_.lock()->onLocalAudioVolumeIndication(volume);
+}
+
 void AvChatComponent::onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) {
     std::list<nertc::NERtcAudioVolumeInfo> neRtcAudioVolumeInfo;
     for (unsigned int i = 0; i < speaker_number; i++) {

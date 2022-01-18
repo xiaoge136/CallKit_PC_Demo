@@ -230,6 +230,15 @@ public:
      @param totalVolume （混音后的）总音量，取值范围为 [0,100]。
      */
     virtual void onRemoteAudioVolumeIndication(const std::list<nertc::NERtcAudioVolumeInfo>& listAudioVolumeInfo, int totalVolume) {}
+
+    /**
+     * @brief 提示频道内本地用户瞬时音量的回调
+     * 该回调默认禁用。可以通过 \ref IRtcEngineEx::enableAudioVolumeIndication "enableAudioVolumeIndication" 方法开启。
+     * 开启后，本地用户说话，SDK 会按  \ref IRtcEngineEx::enableAudioVolumeIndication "enableAudioVolumeIndication" 方法中设置的时间间隔触发该回调。
+     * 如果本地用户将自己静音（调用了 \ref IRtcEngineEx::muteLocalAudioStream "muteLocalAudioStream"），SDK 将音量设置为 0 后回调给应用层。
+     * @param volume （混音后的）音量，取值范围为 [0,100]。
+     */
+    virtual void onLocalAudioVolumeIndication(int volume) {}
 };
 
 /**

@@ -364,6 +364,7 @@ protected:
     virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
     virtual void onUserVideoStop(nertc::uid_t uid) override;
     virtual void onDisconnect(nertc::NERtcErrorCode reason) override;
+    virtual void onLocalAudioVolumeIndication(int volume) override;
     virtual void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) override;
     virtual void onError(int error_code, const char* msg) override;
 
