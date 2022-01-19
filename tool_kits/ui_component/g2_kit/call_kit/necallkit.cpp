@@ -599,7 +599,9 @@ void AvChatComponent::setupLocalView(nertc::NERtcVideoCanvas* canvas) {
         return;
     }
     int ret = rtcEngine_->setupLocalVideoCanvas(canvas);
-    YXLOG(Info) << "setupLocalView ret: " << ret << YXLOGEnd;
+    if (0 != ret) {
+        YXLOG(Info) << "setupLocalVideoCanvas, ret: " << ret << YXLOGEnd;
+    }
 }
 
 void AvChatComponent::setupRemoteView(nertc::NERtcVideoCanvas* canvas, const std::string& userId) {
@@ -610,7 +612,9 @@ void AvChatComponent::setupRemoteView(nertc::NERtcVideoCanvas* canvas, const std
     }
     int64_t uid = channelMembers_[userId];
     int ret = rtcEngine_->setupRemoteVideoCanvas(uid, canvas);
-    YXLOG(Info) << "setupLocalView ret: " << ret << YXLOGEnd;
+    if (0 != ret) {
+        YXLOG(Info) << "setupRemoteVideoCanvas, ret: " << ret << YXLOGEnd;
+    }
     // ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
     // YXLOG(Info) << "subscribeRemoteVideoStream ret: " << ret << YXLOGEnd;
 }
@@ -629,7 +633,9 @@ void AvChatComponent::enableLocalVideo(bool enable) {
     }
 
     int ret = rtcEngine_->enableLocalVideo(enable);
-    YXLOG(Info) << "enableLocalVideo ret: " << ret << YXLOGEnd;
+    if (0 != ret) {
+        YXLOG(Info) << "enableLocalVideo, ret: " << ret << YXLOGEnd;
+    }
 }
 
 //音频输入设备静音
@@ -667,7 +673,6 @@ void AvChatComponent::startVideoPreview(bool start /* = true*/) {
 
 void AvChatComponent::switchCallType(std::string userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "switchCallType, userId: " << userId << ", type: " << type << ", status_:" <<status_ << YXLOGEnd;
-
     AVCHAT_ERROR_CODE code = kAvChatNoError;
     if (status_ == idle) {
         code = kAvChatErrorSwitchCallTypeWhenIdle;
@@ -690,12 +695,14 @@ void AvChatComponent::switchCallType(std::string userId, AVCHAT_CALL_TYPE type, 
         int64_t uid = channelMembers_[userId];
         int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, false);
         // ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
-
-        YXLOG(Info) << "subscribeRemoteVideoStream ret: " << ret << YXLOGEnd;
+        if (0 != ret) {
+            YXLOG(Info) << "subscribeRemoteVideoStream, ret: " << ret << YXLOGEnd;
+        }
         ret = rtcEngine_->muteLocalVideoStream(true);
         // ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
-
-        YXLOG(Info) << "enableVideoToAudio ret: " << ret << YXLOGEnd;
+        if (0 != ret) {
+            YXLOG(Info) << "muteLocalVideoStream, ret: " << ret << YXLOGEnd;
+        }
         nim_cpp_wrapper_util::Json::Value values;
         values["cid"] = 2;              // cid = 2表示控制信令，表示触发被叫方视频转音频
         values["type"] = kAvChatAudio;  ///***音频频道* /AUDIO(1), 视频频道VIDEO(2) */
