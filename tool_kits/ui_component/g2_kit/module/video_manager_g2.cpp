@@ -109,7 +109,7 @@ namespace nim_comp
 		nbase::BatpPack bp;
 		AvChatParams params;
 		params.appKey = appkey;// nim::Client::GetCurrentUserAccount();
-		params.useRtcSafeMode = true;  //是否开启安全模式，true表示开启，false表示关闭
+		params.useRtcSafeMode = false;  //是否开启安全模式，true表示开启，false表示关闭
         bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		bp.head_.action_name_ = kAvChatSetupAppKey;
 		bp.body_.param_ = params;
