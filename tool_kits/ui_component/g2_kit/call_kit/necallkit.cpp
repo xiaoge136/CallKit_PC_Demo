@@ -108,7 +108,11 @@ void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode) {
     if (0 != ret) {
         YXLOG(Info) << "setAudioProfile failed, ret: " << ret << YXLOGEnd;
     }
-
+    ret = rtcEngine_->setStatsObserver(this);
+    if (0 != ret) {
+        YXLOG(Info) << "setStatsObserver failed, ret: " << ret << YXLOGEnd;
+    }
+    
     regSignalingCb();
 }
 
@@ -1326,7 +1330,7 @@ void AvChatComponent::regSignalingCb(bool reg) {
 ///////////////////////////////G2事件///////////////////////////////
 void AvChatComponent::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) {
     std::string strAccid = getAccid(uid);
-    YXLOG(Info) << "onJoinChannel accid:" << strAccid << ", uid: " << uid << ", cid: " << cid << ", cname: " << channelName_ << YXLOGEnd;
+    YXLOG(Info) << "onJoinChannel accid:" << strAccid << ", uid: " << uid << ", cid: " << cid << ", cname: " << channelName_ << ", result: " << (int)result << YXLOGEnd;
     // rtcEngine_->enableLocalAudio(true);
     compEventHandler_.lock()->onJoinChannel(strAccid, uid, cid, channelName_, result);
 }
@@ -1394,6 +1398,7 @@ void AvChatComponent::onError(int error_code, const char* msg) {
 }
 
 void AvChatComponent::onNetworkQuality(const nertc::NERtcNetworkQualityInfo* infos, unsigned int user_count) {
+    // YXLOG(Info) << "onNetworkQuality, user_count: " << user_count << YXLOGEnd;
     std::map<uint64_t, nertc::NERtcNetworkQualityType> network_quality;
     for (int i = 0; i < user_count; i++) {
         network_quality[infos[i].uid] = infos[i].tx_quality;
