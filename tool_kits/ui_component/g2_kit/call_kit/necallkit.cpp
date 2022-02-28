@@ -893,12 +893,12 @@ void AvChatComponent::updateChannelMembers(const nim::SignalingJoinResParam* res
 }
 
 std::string AvChatComponent::getAccid(int64_t uid) {
-    YXLOG(Info) << "getAccid, uid: " << uid << YXLOGEnd;
+    //YXLOG(Info) << "getAccid, uid: " << uid << YXLOGEnd;
     for (auto it : channelMembers_) {
         if (it.second == uid)
             return it.first;
     }
-    YXLOG(Info) << "getAccid failed" << YXLOGEnd;
+    YXLOG(Info) << "getAccid failed, uid: " << uid << YXLOGEnd;
     return std::to_string(uid);
 }
 
@@ -1399,9 +1399,9 @@ void AvChatComponent::onError(int error_code, const char* msg) {
 
 void AvChatComponent::onNetworkQuality(const nertc::NERtcNetworkQualityInfo* infos, unsigned int user_count) {
     // YXLOG(Info) << "onNetworkQuality, user_count: " << user_count << YXLOGEnd;
-    std::map<uint64_t, nertc::NERtcNetworkQualityType> network_quality;
+    std::map<std::string, nertc::NERtcNetworkQualityInfo> network_quality;
     for (int i = 0; i < user_count; i++) {
-        network_quality[infos[i].uid] = infos[i].tx_quality;
+        network_quality[getAccid(infos[i].uid)] = infos[i];
     }
     compEventHandler_.lock()->onUserNetworkQuality(network_quality);
 }

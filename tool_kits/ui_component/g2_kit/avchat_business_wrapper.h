@@ -103,7 +103,7 @@ namespace nim_comp
         nertc::channel_id_t cid;
         std::string         cname;
         GetTokenServiceFunc tockenServiceFunc;
-        std::map<uint64_t, nertc::NERtcNetworkQualityType>  network_quality;
+        std::map<std::string, nertc::NERtcNetworkQualityInfo>  network_quality;
         AvChatParams() :userData(nullptr), window(nullptr), errCode(0)
         {}
     };
@@ -131,7 +131,7 @@ namespace nim_comp
 
         virtual void onOtherClientAccept() override;
         virtual void onOtherClientReject() override;
-        virtual void onUserNetworkQuality(std::map<uint64_t, nertc::NERtcNetworkQualityType>) override;
+        virtual void onUserNetworkQuality(const std::map<std::string, nertc::NERtcNetworkQualityInfo>&) override;
 
         virtual void onCameraAvailable(const std::string& userId, bool available) override;
         virtual void onAudioAvailable(const std::string& userId, bool available) override;

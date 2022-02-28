@@ -174,7 +174,7 @@ namespace nim_comp
         bp.head_.action_name_ = kAvChatOnOtherClientReject;
         nbase::BusinessManager::GetInstance()->Notify(bp);
     }
-    void AvChatComponentEventHandler::onUserNetworkQuality(std::map<uint64_t, nertc::NERtcNetworkQualityType> network_quality)
+    void AvChatComponentEventHandler::onUserNetworkQuality(const std::map<std::string, nertc::NERtcNetworkQualityInfo>& network_quality)
     {
         QLOG_APP(L"AvChatComponentEventHandler onUserNetworkQuality: ");
 

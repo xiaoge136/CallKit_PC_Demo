@@ -175,7 +175,7 @@ public:
      * @param mapNetworkQuality 用户的网络质量列表
      * @return void
      */
-    virtual void onUserNetworkQuality(const std::map<uint64_t, nertc::NERtcNetworkQualityType>& mapNetworkQuality) {}
+    virtual void onUserNetworkQuality(const std::map<std::string, nertc::NERtcNetworkQualityInfo>& mapNetworkQuality) {}
 
     /**
      * @brief 收到用户视频开关状态
