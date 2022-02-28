@@ -18,7 +18,7 @@ const static char* kNIMNetCallDurations = "durations";
 const static char* kNIMNetCallDuration = "duration";
 const static char* kNIMNetCallAccid = "accid";
 
-const int iCallingTimeoutSeconds = 30 * 1000;
+int iCallingTimeoutSeconds = 30 * 1000;
 std::string g_logPath;
 
 bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName, std::string& attachment);
@@ -253,6 +253,10 @@ std::string AvChatComponent::getAudioDevice(bool isRecord) {
     isRecord ? audio_device_manager->getRecordDevice(device_id) : audio_device_manager->getPlayoutDevice(device_id);
 
     return device_id;
+}
+
+void AvChatComponent::setTimeout(uint32_t period) {
+    iCallingTimeoutSeconds = period;
 }
 
 nertc::IRtcEngineEx*  AvChatComponent::getRtcEngine() {

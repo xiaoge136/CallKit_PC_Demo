@@ -497,6 +497,13 @@ public:
     virtual std::string getAudioDevice(bool isRecord) = 0;
 
     /**
+     * @brief 设置呼叫/接听超时时间
+     * @param period 超时时间，单位毫秒
+     * @return void
+     */
+    virtual void setTimeout(uint32_t period) = 0;
+
+    /**
      * @brief 获取NeRtc引擎
      * @return nertc::IRtcEngineEx*
      */
