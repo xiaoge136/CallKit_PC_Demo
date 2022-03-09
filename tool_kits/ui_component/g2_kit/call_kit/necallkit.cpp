@@ -474,6 +474,12 @@ void AvChatComponent::reject(AvChatComponentOptCb cb) {
 
 void AvChatComponent::hangup(AvChatComponentOptCb cb) {
     YXLOG_API(Info) << "hangup, status_: " << status_ << YXLOGEnd;
+    if (rtcEngine_) {
+        int ret = rtcEngine_->leaveChannel();
+        if (0 != ret) {
+            YXLOG(Info) << "leaveChannel failed, ret: " << ret << YXLOGEnd;
+        }
+    }
     if (status_ == idle) {
         if (cb) {
             cb(kAvChatErrorHangupWhenIdle);
@@ -481,10 +487,6 @@ void AvChatComponent::hangup(AvChatComponentOptCb cb) {
         }
     }
 
-    if (rtcEngine_) {
-        rtcEngine_->leaveChannel();
-    }
-    
     if (status_ == idle) {
         YXLOG(Info) << "The AvChatComponent status is idle, discard hangup operation" << YXLOGEnd;
         return;
@@ -554,7 +556,10 @@ void AvChatComponent::cancel(AvChatComponentOptCb cb) {
             nim::Signaling::CancelInvite(param, nullptr);
         }
         if (rtcEngine_) {
-            rtcEngine_->leaveChannel();
+            int ret = rtcEngine_->leaveChannel();
+            if (0 != ret) {
+                YXLOG(Info) << "leaveChannel failed, ret: " << ret << YXLOGEnd;
+            }
         }
         closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, cb);
     } else {
@@ -586,7 +591,10 @@ void AvChatComponent::leave(AvChatComponentOptCb cb) {
     }
 
     if (rtcEngine_) {
-        rtcEngine_->leaveChannel();
+        int ret = rtcEngine_->leaveChannel();
+        if (0 != ret) {
+            YXLOG(Info) << "leaveChannel failed, ret: " << ret << YXLOGEnd;
+        }
     }
     if (!joined_channel_id_.empty()) {
         nim::SignalingLeaveParam param;
@@ -845,7 +853,8 @@ void AvChatComponent::signalingAcceptCb(int errCode, std::shared_ptr<nim::Signal
             YXLOG(Info) << "handleControl strToken: " << strToken << YXLOGEnd;
             int ret = 0;
             if (rtcEngine_) {
-                rtcEngine_->joinChannel(strToken.c_str(), channelName_.c_str(), uid);
+                YXLOG(Info) << "joinChannel, channelName_: " << channelName_ << YXLOGEnd;
+                ret = rtcEngine_->joinChannel(strToken.c_str(), channelName_.c_str(), uid);
             }
             if (ret != 0) {
                 YXLOG(Error) << "nertc join channel failed, ret: " << ret << YXLOGEnd;
