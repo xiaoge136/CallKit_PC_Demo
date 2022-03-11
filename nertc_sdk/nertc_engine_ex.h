@@ -1,4 +1,4 @@
-﻿/** @file nertc_engine_ex.h
+/** @file nertc_engine_ex.h
 * @brief NERTC SDK扩展接口头文件。
 * NERTC SDK所有接口参数说明: 所有与字符串相关的参数(char *)全部为UTF-8编码。
 * @copyright (c) 2015-2019, NetEase Inc. All rights reserved
@@ -145,6 +145,34 @@ public:
 
     */
     virtual int subscribeRemoteAudioStream(uid_t uid, bool subscribe) = 0;
+
+    
+    /**
+     * 取消或恢复订阅所有远端用户音频流。
+     * @note
+     * - 该方法可以在加入房间前后动态调用，对后续加入的用户也同样生效。
+     *
+     * @param subscribe 是否取消订阅所有远端用户的音频流。
+     * @return
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * @endif
+     */
+    virtual int subscribeAllRemoteAudioStream(bool subscribe) = 0;
+
+    /**
+     * 设置自己的音频只能被房间内指定的人订阅，默认房间所有其他人都可以订阅自己的音频。
+     *
+     * @note
+     *  - 此接口需要在加入房间成功后调用
+     *  - 对于调用接口时不在房间的uid不生效。
+     * @param[in] uid_array 可订阅自己音频的用户uid 列表， 这个列表是全量的，如果列表为空或null，表示其他所有人均可订阅自己的音频。
+     * @param[in] size uid_array的数组长度
+     * @return
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     */
+    virtual int setAudioSubscribeOnlyBy(uid_t* uid_array, uint32_t size) = 0;
 
     /** 设置主流的视频配置。
 
@@ -399,13 +427,13 @@ public:
      - 目前只支持设置采样率。
      - 未调用该接口设置数据格式时，回调中的采样率返回 SDK 默认值。
 
-	 @param sample_rate 指定 *onMixedAudioFrame* 中返回数据的采样率。仅支持 8000， 16000， 32000， 44100或48000。
+     @param format 指定 *onMixedAudioFrame* 中返回数据的采样率和数据的通道数。允许传入 NULL，默认为 NULL。采样率仅支持 8000， 16000， 32000， 44100或48000。
 
 	 @return
 	 - 0: 方法调用成功；
 	 - 其他: 方法调用失败。
 	 */
-	virtual int setMixedAudioFrameParameters(int sample_rate) = 0;
+    virtual int setMixedAudioFrameParameters(NERtcAudioFrameRequestFormat* format) = 0;
 
     /** 注册语音观测器对象。
 

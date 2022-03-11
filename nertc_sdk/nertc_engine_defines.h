@@ -1,4 +1,4 @@
-﻿/** @file nertc_engine_defines.h
+/** @file nertc_engine_defines.h
   * @brief NERtc SDK的一些定义
   * @copyright (c) 2015-2019, NetEase Inc. All rights reserved
   * @author Harrison
