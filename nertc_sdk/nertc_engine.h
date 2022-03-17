@@ -1,4 +1,4 @@
-/** @file nertc_engine.h
+﻿/** @file nertc_engine.h
 * @brief NERTC SDK接口头文件。
 * NERTC SDK所有接口参数说明: 所有与字符串相关的参数(char *)全部为UTF-8编码。
 * @copyright (c) 2015-2021, NetEase Inc. All rights reserved
