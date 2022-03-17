@@ -1043,13 +1043,16 @@ void AvChatComponent::handleInvited(std::shared_ptr<nim::SignalingNotifyInfo> no
 
     bool isFromGroup = false;
     std::vector<std::string> members;
+    std::string channelName_Tmp;
+    std::string version_Tmp;
+    std::string attachment_Tmp;
 
-    if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members, version_, channelName_, attachment_)) {
+    if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members, version_Tmp, channelName_Tmp, attachment_Tmp)) {
         assert(false);
         return;
     }
-    YXLOG(Info) << "handleInvited, from_account_id: " << notifyInfo->from_account_id_ << ", version: " << version_
-                << ", channelName: " << channelName_ << ", attachment: " << attachment_ << ", status_: " << status_ << YXLOGEnd;
+    YXLOG(Info) << "handleInvited, from_account_id: " << notifyInfo->from_account_id_ << ", version: " << version_Tmp
+                << ", channelName: " << channelName_Tmp << ", attachment: " << attachment_Tmp << ", status_: " << status_ << YXLOGEnd;
     nim::SignalingNotifyInfoInvite* inviteInfo = (nim::SignalingNotifyInfoInvite*)notifyInfo.get();
 
     //忙线处理
@@ -1077,9 +1080,9 @@ void AvChatComponent::handleInvited(std::shared_ptr<nim::SignalingNotifyInfo> no
     }
 
     isMasterInvited = false;
-    version_.clear();
-    channelName_.clear();
-    attachment_.clear();
+    version_ = version_Tmp;
+    channelName_ = channelName_Tmp;
+    attachment_ = attachment_Tmp;
 
     // 接听计时
     YXLOG(Info) << "startTimer stop" << YXLOGEnd;

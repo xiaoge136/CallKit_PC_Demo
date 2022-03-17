@@ -96,7 +96,7 @@
       <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_module\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\;..\g2_kit\;$(ProjectDir)../../../nertc_sdk/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim_tools/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim_chatroom/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/nim/;$(ProjectDir)../../../nim_sdk/src/cpp_sdk/depend_lib/src/cpp_wrapper_util/;$(ProjectDir)../../../nim_sdk/src/c_sdk/nim/</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Zm200  /utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
