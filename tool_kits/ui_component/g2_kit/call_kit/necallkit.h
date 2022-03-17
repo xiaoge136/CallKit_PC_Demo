@@ -393,6 +393,7 @@ private:
     // std::string currentChannelId;
     std::weak_ptr<IAvChatComponentEventHandler> compEventHandler_;
     AvChatComponentOptCb optCb_;
+    AvChatComponentOptCb m_accpetCb_ = nullptr;
     std::string senderAccid;
     std::string toAccid;
     std::map<std::string, int64_t> channelMembers_;

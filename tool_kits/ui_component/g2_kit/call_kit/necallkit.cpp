@@ -374,12 +374,16 @@ void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, con
 
 void AvChatComponent::startDialWaitingTimer() {
     YXLOG(Info) << "startDialWaitingTimer" << YXLOGEnd;
+    YXLOG(Info) << "startTimer stop" << YXLOGEnd;
     calling_timeout_timer_->stop();
     calling_timeout_timer_->startTimer(iCallingTimeoutSeconds, 1, [this]() {
         YXLOG(Info) << "startTimer call task, status_: " << status_ << YXLOGEnd;
         if (status_ == calling) {
             // closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
             timeOutHurryUp = true;
+            if (rtcEngine_) {
+                rtcEngine_->leaveChannel();
+            }
             compEventHandler_.lock()->onCallingTimeOut();
             handleNetCallMsg(necall_kit::kNIMNetCallStatusTimeout);
         }
@@ -407,7 +411,7 @@ void AvChatComponent::accept(AvChatComponentOptCb cb) {
         return;
     }
 
-    calling_timeout_timer_->stop();
+    //m_accpetCb_ = cb;
     sendStatics("accept", appKey_);
     //信令accept（自动join）
     nim::SignalingAcceptParam param;
@@ -454,6 +458,7 @@ void AvChatComponent::reject(AvChatComponentOptCb cb) {
         return;
     }
 
+    YXLOG(Info) << "startTimer stop" << YXLOGEnd;
     calling_timeout_timer_->stop();
     if (!isMasterInvited)
         sendStatics("reject", appKey_);
@@ -859,7 +864,7 @@ void AvChatComponent::signalingAcceptCb(int errCode, std::shared_ptr<nim::Signal
             if (ret != 0) {
                 YXLOG(Error) << "nertc join channel failed, ret: " << ret << YXLOGEnd;
                 if (cb)
-                    cb(errCode);
+                    cb(ret);
                 return;
             }
         }
@@ -911,7 +916,7 @@ std::string AvChatComponent::getAccid(int64_t uid) {
         if (it.second == uid)
             return it.first;
     }
-    YXLOG(Info) << "getAccid failed, uid: " << uid << YXLOGEnd;
+    //YXLOG(Info) << "getAccid failed, uid: " << uid << YXLOGEnd;
     return std::to_string(uid);
 }
 
@@ -1036,12 +1041,9 @@ void AvChatComponent::handleInvited(std::shared_ptr<nim::SignalingNotifyInfo> no
     if (compEventHandler_.expired())
         return;
 
-    isMasterInvited = false;
     bool isFromGroup = false;
     std::vector<std::string> members;
-    version_.clear();
-    channelName_.clear();
-    attachment_.clear();
+
     if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members, version_, channelName_, attachment_)) {
         assert(false);
         return;
@@ -1069,19 +1071,33 @@ void AvChatComponent::handleInvited(std::shared_ptr<nim::SignalingNotifyInfo> no
         });
         //忙线方(被叫方)发送话单
         sendNetCallMsg(inviteInfo->from_account_id_, param.channel_id_, inviteInfo->channel_info_.channel_type_,
-                       isFromGroup ? (int)necall_kit::kNIMNetCallStatusRejected : (int)necall_kit::kNIMNetCallStatusBusy,
+            isFromGroup ? (int)necall_kit::kNIMNetCallStatusRejected : (int)necall_kit::kNIMNetCallStatusBusy,
                        std::vector<std::string>{inviteInfo->from_account_id_, nim::Client::GetCurrentUserAccount()}, std::vector<int>{0, 0});
         return;
     }
 
+    isMasterInvited = false;
+    version_.clear();
+    channelName_.clear();
+    attachment_.clear();
+
     // 接听计时
+    YXLOG(Info) << "startTimer stop" << YXLOGEnd;
     calling_timeout_timer_->stop();
     YXLOG(Info) << "startTimer" << YXLOGEnd;
     calling_timeout_timer_->startTimer(iCallingTimeoutSeconds, 1, [this]() {
         YXLOG(Info) << "startTimer call task." << YXLOGEnd;
         timeOutHurryUp = true;
         sendStatics("timeout", appKey_);
+        if (m_accpetCb_) {
+            //m_accpetCb_(kAvChatErrorAcceptWhenCalling);
+            //m_accpetCb_ = nullptr;
+        }
+        hangup([](int){
+            YXLOG(Info) << "timeout hangup." << YXLOGEnd;
+        });
         compEventHandler_.lock()->onUserCancel(from_account_id_);
+        compEventHandler_.lock()->onCallingTimeOut();
         status_ = idle;
     });
 
@@ -1239,6 +1255,7 @@ void AvChatComponent::handleCancelInvite(std::shared_ptr<nim::SignalingNotifyInf
         timeOutHurryUp = false;
         return;
     }
+    YXLOG(Info) << "startTimer stop" << YXLOGEnd;
     calling_timeout_timer_->stop();
     nim::SignalingNotifyInfoCancelInvite* cancelInfo = (nim::SignalingNotifyInfoCancelInvite*)notifyInfo.get();
     compEventHandler_.lock()->onUserCancel(cancelInfo->from_account_id_);
@@ -1353,8 +1370,14 @@ void AvChatComponent::onUserJoined(nertc::uid_t uid, const char* user_name) {
     int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
     // ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
     YXLOG(Info) << "subscribeRemoteVideoStream, ret:" << ret << YXLOGEnd;
-
-    //对方rtc Join之后 订阅视频流
+    if (uid != channelMembers_[nim::Client::GetCurrentUserAccount()]) {
+        YXLOG(Info) << "startTimer stop" << YXLOGEnd;
+        calling_timeout_timer_->stop();
+        if (m_accpetCb_) {
+            //m_accpetCb_(kAvChatNoError);
+            //m_accpetCb_ = nullptr;
+        }
+    }
 }
 
 void AvChatComponent::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason) {
