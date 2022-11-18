@@ -17,7 +17,7 @@ private:
 	std::string name;
 	std::thread *thread = nullptr;
 	std::mutex mutex;
-	std::atomic<bool> expired;
+	std::atomic<bool> expired = true;
 	std::atomic<bool> stop_ = false;
 	std::condition_variable cond;
 
@@ -30,8 +30,11 @@ public:
 		stop();
 	}
 
-	void startTimer(int interval, int loop, std::function<void()> task) {
+    bool started() const {
+        return !expired;
+    }
 
+	void startTimer(int interval, int loop, std::function<void()> task) {
 		if (expired == false) {
 			std::cout << "timer[" << name << "] already started" << std::endl;
 			return;
@@ -47,7 +50,6 @@ public:
 		expired = false;
 		thread = new std::thread([this, interval, loop, task]() mutable {
 			std::cout << "timer[" << name << "] thread start" << std::endl;
-
 			const std::chrono::milliseconds &ms = std::chrono::milliseconds(interval);
 			auto endTime = std::chrono::duration_cast<std::chrono::milliseconds>( std::chrono::system_clock::now().time_since_epoch()) + ms;
 			while (loop--) {

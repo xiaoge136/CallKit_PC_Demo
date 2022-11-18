@@ -486,16 +486,13 @@ void AvChatComponent::hangup(AvChatComponentOptCb cb) {
         }
     }
     if (status_ == idle) {
+        YXLOG(Info) << "The AvChatComponent status is idle, discard hangup operation" << YXLOGEnd;
         if (cb) {
             cb(kAvChatErrorHangupWhenIdle);
             return;
         }
     }
 
-    if (status_ == idle) {
-        YXLOG(Info) << "The AvChatComponent status is idle, discard hangup operation" << YXLOGEnd;
-        return;
-    }
     if (status_ == calling && isMasterInvited) {
         if (timeOutHurryUp)
             sendStatics("timeout", appKey_);
@@ -830,6 +827,10 @@ void AvChatComponent::signalingInviteCb(int errCode, std::shared_ptr<nim::Signal
 
 void AvChatComponent::signalingAcceptCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb) {
     YXLOG(Info) << "signalingAcceptCb, errCode: " << errCode << YXLOGEnd;
+    if (!calling_timeout_timer_->started()) {
+        YXLOG(Info) << "calling_timeout_timer_ has been discontinued" << YXLOGEnd;
+        return;
+    }
     nim::SignalingAcceptResParam* res = (nim::SignalingAcceptResParam*)res_param.get();
     if (errCode == 200) {
         updateChannelMembers(res);
@@ -1155,9 +1156,16 @@ void AvChatComponent::handleAccepted(std::shared_ptr<nim::SignalingNotifyInfo> n
     if (isUseRtcSafeMode)
         strToken = stoken_;
     YXLOG(Info) << "handleAccepted: strToken: " << strToken << YXLOGEnd;
-    int ret = rtcEngine_->joinChannel(strToken.c_str(),
+    int ret = rtcEngine_->leaveChannel();
+    if (0 != ret) {
+        YXLOG(Info) << "leaveChannel, ret: " << ret << YXLOGEnd;
+    }
+    ret = rtcEngine_->joinChannel(strToken.c_str(),
                                       versionCompare(version_, "1.1.0") >= 0 ? channelName_.c_str() : acceptedInfo->channel_info_.channel_id_.c_str(),
                                       channelMembers_[senderAccid]);
+    if (0 != ret) {
+        YXLOG(Info) << "joinChannel, ret: " << ret << YXLOGEnd;
+    }
 
     // rtcEngine_->enableLocalAudio(true);
     // rtcEngine_->(true);
@@ -1248,8 +1256,11 @@ void AvChatComponent::handleLeave(std::shared_ptr<nim::SignalingNotifyInfo> noti
 void AvChatComponent::handleClose(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo) {
     nim::SignalingNotifyInfoClose* closeInfo = (nim::SignalingNotifyInfoClose*)notifyInfo.get();
     YXLOG(Info) << "handleClose, from_account_id_: " << closeInfo->from_account_id_ << ", senderAccid: " << senderAccid << YXLOGEnd;
-    status_ = idle;
+    hangup([](int) {
+        YXLOG(Info) << "handleClose hangup." << YXLOGEnd;
+    });
     compEventHandler_.lock()->onCallEnd();
+    status_ = idle;
 }
 
 void AvChatComponent::handleCancelInvite(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo) {
@@ -1260,6 +1271,10 @@ void AvChatComponent::handleCancelInvite(std::shared_ptr<nim::SignalingNotifyInf
     }
     YXLOG(Info) << "startTimer stop" << YXLOGEnd;
     calling_timeout_timer_->stop();
+
+    hangup([](int) {
+        YXLOG(Info) << "handleCancelInvite hangup." << YXLOGEnd;
+    });
     nim::SignalingNotifyInfoCancelInvite* cancelInfo = (nim::SignalingNotifyInfoCancelInvite*)notifyInfo.get();
     compEventHandler_.lock()->onUserCancel(cancelInfo->from_account_id_);
     status_ = idle;
