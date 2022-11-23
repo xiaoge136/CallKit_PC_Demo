@@ -116,6 +116,7 @@
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\..\libs\;..\..\..\..\bin\;$(ProjectDir)./third_party\alog\lib\x86\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>nertc_sdk.lib;yx_alog_md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -145,6 +146,7 @@
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\..\libs\;..\..\..\..\bin\;$(ProjectDir)./third_party\alog\lib\x86\Release</AdditionalLibraryDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

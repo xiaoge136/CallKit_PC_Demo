@@ -6,6 +6,7 @@
 namespace nim_comp
 {
     std::shared_ptr<AvChatComponentEventHandler> AvChatBusinessWrapper::eventHandler_;
+    std::shared_ptr<AvChatComponentNERtcEventHandler> AvChatBusinessWrapper::nertcEventHandler_;
     void AvChatComponentEventHandler::onInvited(const std::string& invitor, std::vector<std::string> userIDs, bool isFromGroup, const std::string& groupID, AVCHAT_CALL_TYPE type, const std::string& attachment)
     {
         QLOG_APP(L"AvChatComponentEventHandler onInvited, invitor: {0}") << invitor;
@@ -254,14 +255,17 @@ namespace nim_comp
     }
     void AvChatBusinessWrapper::setupAppKey(const nbase::BatpPack& request)
     {
+        nertcEventHandler_.reset();
+        nertcEventHandler_ = std::make_shared<AvChatComponentNERtcEventHandler>();
+
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
         std::string key = params.appKey;
         bool bUseRtcSafeMode = params.useRtcSafeMode;
-		createChatComponent()->setupAppKey(key, bUseRtcSafeMode);
+        createChatComponent()->setupAppKey(key, bUseRtcSafeMode, nertcEventHandler_);
 
         eventHandler_.reset();
         eventHandler_ = std::make_shared<AvChatComponentEventHandler>();
-		createChatComponent()->regEventHandler(eventHandler_);
+        createChatComponent()->regEventHandler(eventHandler_);
     }
 
     //avchat 组件并未定义onCalling事件，为了通知界面更新状态，在AvChatBusinessWrapper::call中发一个onCalling事件
@@ -503,6 +507,53 @@ namespace nim_comp
         AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
 		createChatComponent()->setTokenService((GetTokenServiceFunc)params.tockenServiceFunc);
     }
+    void AvChatBusinessWrapper::startScreenSharing() {
+        QLOG_APP(L"AvChatBusinessWrapper startScreenSharing");
+        auto rtc = createChatComponent()->getRtcEngine();
+        if (rtc) {
+            nertc::NERtcVideoCanvas canvas;
+            canvas.window = nullptr;
+            canvas.cb = nullptr;
+            canvas.user_data = nullptr;
+            canvas.scaling_mode = nertc::kNERtcVideoScaleFit;
+            int ret = rtc->setupLocalSubStreamVideoCanvas(&canvas);
+            if (0 != ret) {
+                QLOG_APP(L"setupLocalSubStreamVideoCanvas, ret: {0}", ret);
+            }
+
+            nertc::NERtcRectangle source = {};
+            source.x = 0;
+            source.y = 0;
+            source.width = 1920;
+            source.height = 1080;
+
+            nertc::NERtcRectangle region = {};
+
+            nertc::NERtcScreenCaptureParameters params = {};
+            params.bitrate = 0;
+            params.frame_rate = 25;
+            params.profile = nertc::kNERtcScreenProfileCustom;
+            params.capture_mouse_cursor = true;
+            params.dimensions.width = source.width;
+            params.dimensions.height = source.height;
+            params.excluded_window_list = nullptr;
+            params.excluded_window_count = 0;
+            params.prefer = nertc::kNERtcSubStreamContentPreferMotion;
+            ret = rtc->startScreenCaptureByScreenRect(source, region, params);
+            if (0 != ret) {
+                QLOG_APP(L"startScreenCaptureByScreenRect, ret: {0}", ret);
+            }
+        }
+    }
+
+    void AvChatBusinessWrapper::stopScreenSharing() {
+        QLOG_APP(L"AvChatBusinessWrapper stopScreenSharing");
+        auto rtc = createChatComponent()->getRtcEngine();
+        if (rtc) {
+            rtc->stopScreenCapture();
+        }
+    }
+
     std::string AvChatBusinessWrapper::getChannelId()
     {
         auto info = createChatComponent()->getCreatedChannelInfo();

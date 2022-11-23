@@ -412,6 +412,10 @@ bool SessionBox::OnClicked(ui::EventArgs* param)
 	{
 		OnBtnVideoG2();
 	}
+    else if (name == L"btn_screensharing")
+    {
+        OnBtnScreenSharing();
+    }
 	else if (name == L"btn_rts")
 	{
 		OnBtnRts();
@@ -831,6 +835,13 @@ void SessionBox::OnBtnVideoG2()
 		break;
 	}
 }
+
+void SessionBox::OnBtnScreenSharing() {
+    static bool bSharing = true;
+    VideoManagerG2::GetInstance()->ScreenSharing(bSharing);
+    bSharing = !bSharing;
+}
+
 void SessionBox::OnVChatSelectedCallback(const std::list<UTF8String>& selected_friends, const std::list<UTF8String>& selected_teams)
 {
 	auto cb = [=](int res)

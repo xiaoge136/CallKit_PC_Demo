@@ -7,6 +7,7 @@
 ## 接口说明
 
  - `IAvChatComponentEventHandler` 为呼叫组件回调接口类（通话过程发生状态变化等的回调），需要继承自它，然后调用 `createChatComponent` 创建的实例的 `regEventHandler` 接口注册
+  - `IAvChatComponentNERtcEventHandler` 为NeRtc SDK回调接口类，需要继承自它，然后调用 `createChatComponent` 创建的实例的 `setupAppKey` 接口注册。如果需要重载此类中的方法，务必在子类中调用对应此类里的方法
  - `createChatComponent` 创建呼叫组件的单例
  - `destroyChatComponent`销毁呼叫组件的单例
  - `setupAppKey` 设置appkey，创建内部资源

@@ -94,6 +94,8 @@ namespace nim_comp
 		void SetDeviceStatusFromSetting();
 		std::vector<std::string> GetSupportedActionsList();
 
+        void ScreenSharing(bool bStart);
+
 		/**
 		* 订阅感兴趣的事件，用于更新界面状态
 		* @return void	无返回值

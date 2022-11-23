@@ -84,8 +84,8 @@ void AvChatComponent::release() {
     regSignalingCb(false);
 }
 
-void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode) {
-    YXLOG_API(Info) << "setupAppKey, useRtcSafeMode: " << useRtcSafeMode << YXLOGEnd;
+void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode, std::shared_ptr<IAvChatComponentNERtcEventHandler> handler) {
+    YXLOG_API(Info) << "setupAppKey, useRtcSafeMode: " << useRtcSafeMode << ", handler: " << handler.get() << YXLOGEnd;
     appKey_ = key;
     isUseRtcSafeMode = useRtcSafeMode;
     //创建并初始化engine；
@@ -94,10 +94,16 @@ void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode) {
     rtcEngine_ = (nertc::IRtcEngineEx*)createNERtcEngine();
     assert(rtcEngine_);
 
+    if (!handler) {
+        nertcHandler_ = std::make_shared<IAvChatComponentNERtcEventHandler>();
+    } else {
+        nertcHandler_ = handler;
+    }
+
     std::string logPath = necall_kit::UTF16ToUTF8(necall_kit::GetLocalAppDataDir().append(AVCHAT_LOG_DIR));
     nertc::NERtcEngineContext context = {};
     context.app_key = appKey_.c_str();
-    context.event_handler = this;
+    context.event_handler = nertcHandler_.get();
     context.log_dir_path = logPath.c_str();  // AVCHAT_LOG_DIR;
     context.log_level = nertc::kNERtcLogLevelDebug;
     context.log_file_max_size_KBytes = 0;
@@ -108,7 +114,7 @@ void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode) {
     if (0 != ret) {
         YXLOG(Info) << "setAudioProfile failed, ret: " << ret << YXLOGEnd;
     }
-    ret = rtcEngine_->setStatsObserver(this);
+    ret = rtcEngine_->setStatsObserver(nertcHandler_.get());
     if (0 != ret) {
         YXLOG(Info) << "setStatsObserver failed, ret: " << ret << YXLOGEnd;
     }
@@ -1459,6 +1465,7 @@ void AvChatComponent::onNetworkQuality(const nertc::NERtcNetworkQualityInfo* inf
     }
     compEventHandler_.lock()->onUserNetworkQuality(network_quality);
 }
+
 ///////////////////////////////////////////内部方法////////////////////////////////////////
 // Signaling::SignalingNotifyCallback
 int64_t getUid(const std::list<nim::SignalingMemberInfo>& list, const std::string& accid) {
@@ -1576,6 +1583,55 @@ void sendNetCallMsg(const std::string& to, const std::string& channelId, int typ
 
     auto json_msg = nim::Talk::CreateG2NetCallMessage(to, nim::kNIMSessionTypeP2P, client_msg_id, attach_info, setting);
     nim::Talk::SendMsg(json_msg);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+void IAvChatComponentNERtcEventHandler::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) {
+    AvChatComponent::getInstance()->onJoinChannel(cid, uid, result, elapsed);
+}
+
+void IAvChatComponentNERtcEventHandler::onUserJoined(nertc::uid_t uid, const char* user_name) {
+    AvChatComponent::getInstance()->onUserJoined(uid, user_name);
+}
+
+void IAvChatComponentNERtcEventHandler::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason) {
+    AvChatComponent::getInstance()->onUserLeft(uid, reason);
+}
+
+void IAvChatComponentNERtcEventHandler::onUserAudioStart(nertc::uid_t uid) {
+    AvChatComponent::getInstance()->onUserAudioStart(uid);
+}
+
+void IAvChatComponentNERtcEventHandler::onUserAudioStop(nertc::uid_t uid) {
+    AvChatComponent::getInstance()->onUserAudioStop(uid);
+}
+
+void IAvChatComponentNERtcEventHandler::onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) {
+    AvChatComponent::getInstance()->onUserVideoStart(uid, max_profile);
+}
+
+void IAvChatComponentNERtcEventHandler::onUserVideoStop(nertc::uid_t uid) {
+    AvChatComponent::getInstance()->onUserVideoStop(uid);
+}
+
+void IAvChatComponentNERtcEventHandler::onDisconnect(nertc::NERtcErrorCode reason) {
+    AvChatComponent::getInstance()->onDisconnect(reason);
+}
+
+void IAvChatComponentNERtcEventHandler::onLocalAudioVolumeIndication(int volume) {
+    AvChatComponent::getInstance()->onLocalAudioVolumeIndication(volume);
+}
+
+void IAvChatComponentNERtcEventHandler::onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) {
+    AvChatComponent::getInstance()->onRemoteAudioVolumeIndication(speakers, speaker_number, total_volume);
+}
+
+void IAvChatComponentNERtcEventHandler::onError(int error_code, const char* msg) {
+    AvChatComponent::getInstance()->onError(error_code, msg);
+}
+
+void IAvChatComponentNERtcEventHandler::onNetworkQuality(const nertc::NERtcNetworkQualityInfo* infos, unsigned int user_count) {
+    AvChatComponent::getInstance()->onNetworkQuality(infos, user_count);
 }
 
 }  // namespace necall_kit

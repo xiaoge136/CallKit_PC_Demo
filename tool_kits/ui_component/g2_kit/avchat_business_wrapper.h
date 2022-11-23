@@ -141,6 +141,27 @@ namespace nim_comp
     };
 
     /**
+     * @brief 将组件回调传来的参数，组装成 nbase::BatpPack 通知出去
+     */
+    class AvChatComponentNERtcEventHandler : public IAvChatComponentNERtcEventHandler
+    {
+    public:
+        virtual void onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) override {
+            IAvChatComponentNERtcEventHandler::onJoinChannel(cid, uid, result, elapsed);
+            QLOG_APP(L"onJoinChannel.");
+        }
+        virtual void onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override {
+            QLOG_APP(L"onUserSubStreamVideoStart, uid:{0}, max_profile:{1}", uid, (int)max_profile);
+        }
+        virtual void onUserSubStreamVideoStop(nertc::uid_t uid) override {
+            QLOG_APP(L"onUserSubStreamVideoStop, uid:{0}", uid);
+        }
+        virtual void onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status) override {
+            QLOG_APP(L"onScreenCaptureStatus, status:{0}", status);
+        }
+    };
+
+    /**
      * @brief 组件实现类的Wrapper
      * @see AvChatComponent
      */
@@ -175,7 +196,8 @@ namespace nim_comp
         static void stopAudioDeviceLoopbackTest(const nbase::BatpPack& request);
         static void setVideoQuality(const nbase::BatpPack& request);
         static void getTokenService(const nbase::BatpPack& request);
-
+        static void startScreenSharing();
+        static void stopScreenSharing();
 
         static std::string getChannelId();
         static void getLocalDeviceList(
@@ -193,6 +215,7 @@ namespace nim_comp
 
     private:
         static std::shared_ptr<AvChatComponentEventHandler> eventHandler_;
+        static std::shared_ptr<AvChatComponentNERtcEventHandler> nertcEventHandler_;
     };
 }
 

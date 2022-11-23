@@ -35,7 +35,7 @@ class Timer;
 /**
  * @brief 组件实现类
  */
-class AvChatComponent : public IAvChatComponent, public nertc::IRtcEngineEventHandlerEx, public nertc::IRtcMediaStatsObserver {
+class AvChatComponent : public IAvChatComponent {
     /**
      * 呼叫的状态
      */
@@ -64,9 +64,10 @@ public:
      * @brief 创建内部资源
      * @param key appkey
      * @param useRtcSafeMode 是否使用安全模式，默认true使用，false不使用
+     * @param handler 监听nertc事件
      * @return void
      */
-    virtual void setupAppKey(const std::string& key, bool useRtcSafeMode = true) override;
+    virtual void setupAppKey(const std::string& key, bool useRtcSafeMode = true, std::shared_ptr<IAvChatComponentNERtcEventHandler> handler = nullptr) override;
 
     /**
      * @brief 释放内部资源
@@ -326,7 +327,7 @@ public:
      * @brief 获取G2引擎
      * @return nertc::IRtcEngineEx*
      */
-	virtual nertc::IRtcEngineEx* getRtcEngine() override;
+    virtual nertc::IRtcEngineEx* getRtcEngine() override;
 
     /**
      * @brief 设置token服务
@@ -335,7 +336,22 @@ public:
      * @param getTokenService token服务
      * @return void
      */
-	virtual void setTokenService(GetTokenServiceFunc getTokenService);
+    virtual void setTokenService(GetTokenServiceFunc getTokenService);
+
+public:
+    // G2事件回调
+    void onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed);
+    void onUserJoined(nertc::uid_t uid, const char* user_name);
+    void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason);
+    void onUserAudioStart(nertc::uid_t uid);
+    void onUserAudioStop(nertc::uid_t uid);
+    void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
+    void onUserVideoStop(nertc::uid_t uid);
+    void onDisconnect(nertc::NERtcErrorCode reason);
+    void onLocalAudioVolumeIndication(int volume);
+    void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume);
+    void onError(int error_code, const char* msg);
+    void onNetworkQuality(const nertc::NERtcNetworkQualityInfo* infos, unsigned int user_count);
 
 protected:
     void signalingCreateCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb);
@@ -362,23 +378,6 @@ protected:
     void signalingMutilClientSyncCb(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo);
     void signalingOfflineNotifyCb(std::list<std::shared_ptr<nim::SignalingNotifyInfo>> notifyInfo);
 
-    // G2事件回调
-    virtual void onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) override;
-    virtual void onUserJoined(nertc::uid_t uid, const char* user_name) override;
-    virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason) override;
-    virtual void onUserAudioStart(nertc::uid_t uid) override;
-    virtual void onUserAudioStop(nertc::uid_t uid) override;
-    virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
-    virtual void onUserVideoStop(nertc::uid_t uid) override;
-    virtual void onDisconnect(nertc::NERtcErrorCode reason) override;
-    virtual void onLocalAudioVolumeIndication(int volume) override;
-    virtual void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) override;
-    virtual void onError(int error_code, const char* msg) override;
-
-    // G2 MediaStatsObserver回调
-    //该回调描述每个用户在通话中的网络状态，每 2 秒触发一次，只上报状态有变更的成员。
-    virtual void onNetworkQuality(const nertc::NERtcNetworkQualityInfo* infos, unsigned int user_count) override;
-
 private:
     void startDialWaitingTimer();
     void closeChannelInternal(const std::string& channelId, AvChatComponentOptCb cb);
@@ -392,6 +391,7 @@ private:
     nertc::IRtcEngineEx* rtcEngine_ = nullptr;
     // std::string currentChannelId;
     std::weak_ptr<IAvChatComponentEventHandler> compEventHandler_;
+    std::shared_ptr<IAvChatComponentNERtcEventHandler> nertcHandler_;
     AvChatComponentOptCb optCb_;
     AvChatComponentOptCb m_accpetCb_ = nullptr;
     std::string senderAccid;

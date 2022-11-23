@@ -173,6 +173,10 @@ namespace nim_comp
 		nbase::BusinessManager::GetInstance()->SubNotify(vec, cb);
 	}
 
+    void VideoManagerG2::ScreenSharing(bool bStart) {
+        bStart ? AvChatBusinessWrapper::startScreenSharing() : AvChatBusinessWrapper::stopScreenSharing();
+    }
+
 	bool VideoManagerG2::ShowVideoChatForm(const std::string& session_id, bool video, bool isSender/* = true*/)
 	{
 		SetDeviceOnce();

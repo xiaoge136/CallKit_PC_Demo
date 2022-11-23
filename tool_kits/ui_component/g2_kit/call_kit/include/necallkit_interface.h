@@ -242,6 +242,27 @@ public:
 };
 
 /**
+ * @brief nertc事件回调接口类
+ * @note 需要在setupAppKey中设置进去。如果需要重载此类中的方法，务必在子类中调用对应此类里的方法
+ */
+class IAvChatComponentNERtcEventHandler : public nertc::IRtcEngineEventHandlerEx, public nertc::IRtcMediaStatsObserver {
+public:
+    virtual ~IAvChatComponentNERtcEventHandler() {}
+    virtual void onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) override;
+    virtual void onUserJoined(nertc::uid_t uid, const char* user_name) override;
+    virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason) override;
+    virtual void onUserAudioStart(nertc::uid_t uid) override;
+    virtual void onUserAudioStop(nertc::uid_t uid) override;
+    virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
+    virtual void onUserVideoStop(nertc::uid_t uid) override;
+    virtual void onDisconnect(nertc::NERtcErrorCode reason) override;
+    virtual void onLocalAudioVolumeIndication(int volume) override;
+    virtual void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) override;
+    virtual void onError(int error_code, const char* msg) override;
+    virtual void onNetworkQuality(const nertc::NERtcNetworkQualityInfo* infos, unsigned int user_count) override;
+};
+
+/**
  * 组件操作回调（返回调用组件接口的错误码）
  */
 using AvChatComponentOptCb = std::function<void(int errCode)>;
@@ -261,9 +282,10 @@ public:
      * @brief 创建内部资源
      * @param key appkey
      * @param useRtcSafeMode 是否使用安全模式，默认true使用，false不使用
+     * @param handler 监听nertc事件
      * @return void
      */
-    virtual void setupAppKey(const std::string& key, bool useRtcSafeMode = true) = 0;
+    virtual void setupAppKey(const std::string& key, bool useRtcSafeMode = true, std::shared_ptr<IAvChatComponentNERtcEventHandler> handler = nullptr) = 0;
 
     /**
      * @brief 释放内部资源
@@ -519,7 +541,7 @@ public:
     virtual void setTokenService(GetTokenServiceFunc getTokenService) = 0;
 };
 
-#define NECALLKIT_VER "1.3.1"   /**< 呼叫组件版本 */
+#define NECALLKIT_VER "1.3.2"   /**< 呼叫组件版本 */
 
 /**
  * @brief 创建组件实例

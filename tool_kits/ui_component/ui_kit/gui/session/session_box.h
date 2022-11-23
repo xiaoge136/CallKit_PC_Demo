@@ -416,6 +416,12 @@ private:
 	*/
 	void OnBtnVideoG2();
 
+    /**
+    * 响应屏幕分享
+    * @return void 无返回值
+    */
+    void OnBtnScreenSharing();
+
 	/**
 	* 响应视频按钮消息
 	* @return void 无返回值
